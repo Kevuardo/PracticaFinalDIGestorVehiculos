@@ -27,18 +27,27 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jpGestorVehiculos = new javax.swing.JPanel();
+        jToolBar1 = new javax.swing.JToolBar();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        jToolBar1.setRollover(true);
+
+        javax.swing.GroupLayout jpGestorVehiculosLayout = new javax.swing.GroupLayout(jpGestorVehiculos);
+        jpGestorVehiculos.setLayout(jpGestorVehiculosLayout);
+        jpGestorVehiculosLayout.setHorizontalGroup(
+            jpGestorVehiculosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        jpGestorVehiculosLayout.setVerticalGroup(
+            jpGestorVehiculosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpGestorVehiculosLayout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 275, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jpGestorVehiculos, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -79,5 +88,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JPanel jpGestorVehiculos;
     // End of variables declaration//GEN-END:variables
 }
