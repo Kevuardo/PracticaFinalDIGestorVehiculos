@@ -108,6 +108,14 @@ public class GestorBBDD {
         }
     }
     
+    public void modificarMarca(Marca marcaModificada) throws SQLException, Exception {
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        
+    }
+    
     /**
      * Método usado para eliminar un registro de marca a partir de su id, al ser clave primaria.
      * @param id_marca El id de la marca que se desea eliminar.
@@ -198,6 +206,14 @@ public class GestorBBDD {
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
+    }
+    
+    public void modificarModelo(Modelo modeloModificado) throws SQLException, Exception {
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        
     }
     
     /**
