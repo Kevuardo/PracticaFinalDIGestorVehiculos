@@ -108,10 +108,26 @@ public class GestorBBDD {
         }
     }
     
+    /**
+     * Método usado para modificar registros de marca en la BD.
+     * 
+     * @param marcaModificada Objeto Marca del que recoger los datos para modificar en la BD.
+     * @throws SQLException
+     * @throws Exception 
+     */
     public void modificarMarca(Marca marcaModificada) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
         if (conexion == null) {
             this.abrirConexion();
+        }
+        try {
+            /* NOTA: EL ID_MARCA HAY QUE PASARLO COMO PARÁMETRO EN LUGAR DE HARDCODE. RECOGERLO CON UN OBJETO MARCA DESDE LA INTERFAZ. */
+            sql = "update marcas set nombre_marca = ? where id_marca = 1";
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, marcaModificada.getNombre_marca());
+            ps.executeUpdate();
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
         }
         
     }
@@ -208,12 +224,31 @@ public class GestorBBDD {
         }
     }
     
+    /**
+     * Método usado para modificar registros de modelo en la BD.
+     * 
+     * @param modeloModificado Objeto Modelo del que recoger los datos para modificar en la BD.
+     * @throws SQLException
+     * @throws Exception 
+     */
     public void modificarModelo(Modelo modeloModificado) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
         if (conexion == null) {
             this.abrirConexion();
         }
-        
+        try {
+            /* NOTA: EL ID_MODELO HAY QUE PASARLO COMO PARÁMETRO EN LUGAR DE HARDCODE. RECOGERLO CON UN OBJETO MODELO DESDE LA INTERFAZ. */
+            sql = "update modelos set nombre_modelo = ?, id_marca = ?, id_eficiencia = ?, consumo_modelo = ?, emisiones_modelo = ? where id_modelo = 6";
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, modeloModificado.getNombre_modelo());
+            ps.setInt(2, modeloModificado.getId_marca());
+            ps.setInt(3, modeloModificado.getId_eficiencia());
+            ps.setFloat(4, modeloModificado.getConsumo_modelo());
+            ps.setFloat(5, modeloModificado.getEmisiones_modelo());
+            ps.executeUpdate();
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
     }
     
     /**
