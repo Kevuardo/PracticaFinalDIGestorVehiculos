@@ -54,6 +54,26 @@ public class GestorBBDD {
         }
     }
     
+    public boolean existeMarca(Marca marcaConsulta) throws SQLException, Exception{
+        boolean yaExiste = false;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from marcas where nombre_marca = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, marcaConsulta.getNombre_marca());
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                yaExiste = true;
+            }
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+        return yaExiste;
+    }
+    
     /**
      * Método usado para listar todas las marcas registradas en la BD para volcarlas en la vista.
      * 
