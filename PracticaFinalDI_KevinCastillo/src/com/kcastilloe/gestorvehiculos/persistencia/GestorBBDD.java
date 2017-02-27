@@ -1,6 +1,8 @@
 package com.kcastilloe.gestorvehiculos.persistencia;
 
 import com.kcastilloe.gestorvehiculos.gui.JFGestorVehiculos;
+import com.kcastilloe.gestorvehiculos.modelo.Marca;
+import com.kcastilloe.gestorvehiculos.modelo.Modelo;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,8 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Maneja todos los métodos de gestión de BBDD (creación, inserción,
@@ -22,14 +22,15 @@ public class GestorBBDD {
     private String url = "jdbc:mysql://localhost:3306/vehiculos?useServerPrepStmts=true";
     private String usuario = "dam2015";
     private String password = "dam2015";
-    
+    Marca miMarca;
+    Modelo miModelo;
+    JFGestorVehiculos jfp;
     
     private Connection conexion = null; /* La conexión a establecer. */
     private String sql; /* La cadena que recogerá las sentencias SQL (creación, inserción, consulta... */
     private PreparedStatement ps = null; /* Para las operaciones sobre la BD (modificación y consulta). */
     private ResultSet rs = null;
     PrintWriter fichero = null;
-    JFGestorVehiculos jfp;
 
     public GestorBBDD(JFGestorVehiculos jpp) {
         this.jfp = jpp;
@@ -53,30 +54,46 @@ public class GestorBBDD {
         }
     }
     
+    /**
+     * Método usado para listar todas las marcas registradas en la BD para volcarlas en la vista.
+     * 
+     * @return ArrayList con todas las marcas existentes en la BD.
+     * @throws SQLException
+     * @throws Exception 
+     */
     public ArrayList buscarMarcas() throws SQLException, Exception {
-        String marca = null;
-        ArrayList<String> almar = new ArrayList();
+        int id_marca;
+        String nombre_marca = null;
+        ArrayList<Marca> alMarcas = new ArrayList();
         
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
         if (conexion == null) {
             this.abrirConexion();
         }
         try {
-            sql = "select distinct nombre_marca from marcas order by nombre_marca";
+            sql = "select * from marcas order by nombre_marca";
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                marca = rs.getString("nombre_marca");
-                almar.add(marca);
-                System.out.println(marca);
+                id_marca = rs.getInt("id_marca");
+                nombre_marca = rs.getString("nombre_marca");
+                miMarca = new Marca(id_marca, nombre_marca);
+                alMarcas.add(miMarca);
             }
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
-        return almar;
+        return alMarcas;
     }
     
-    public void crearMarca(String nombreMarcaNueva) throws SQLException, Exception {
+    /**
+     * Método usado para crear un nuevo registro de marca en la BD.
+     * 
+     * @param nuevaMarca Objeto Marca del que recoger los datos para guardar en BD.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public void crearMarca(Marca nuevaMarca) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
         if (conexion == null) {
             this.abrirConexion();
@@ -84,13 +101,20 @@ public class GestorBBDD {
         try {
             sql = "insert into marcas (nombre_marca) values (?)";
             ps = conexion.prepareStatement(sql);
-            ps.setString(1, nombreMarcaNueva);
+            ps.setString(1, nuevaMarca.getNombre_marca());
             ps.executeUpdate();
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
     }
     
+    /**
+     * Método usado para eliminar un registro de marca a partir de su id, al ser clave primaria.
+     * @param id_marca El id de la marca que se desea eliminar.
+     * @return Las filas que se han visto afectadas por la operación de borrado.
+     * @throws SQLException
+     * @throws Exception 
+     */
     public int borrarMarca (int id_marca) throws SQLException, Exception {
         int filasAfectadas = 0;
         
@@ -110,30 +134,54 @@ public class GestorBBDD {
         return 9;
     }
     
+    /**
+     * Método usado para listar todos los modelos registrados en la BD para volcarlos en la vista.
+     * @return ArrayList con todos los modelos existentes en la BD.
+     * @throws SQLException
+     * @throws Exception 
+     */
     public ArrayList buscarModelos() throws SQLException, Exception {
-        String modelo = null;
-        ArrayList<String> almod = new ArrayList();
+        int id_modelo = 0;
+        String nombre_modelo = null;
+        int id_marca = 0;
+        int id_eficiencia = 0;
+        float consumo_modelo = 0f;
+        float emisiones_modelo = 0f;
+        
+        ArrayList<Modelo> alModelos = new ArrayList();
         
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
         if (conexion == null) {
             this.abrirConexion();
         }
         try {
-            sql = "select distinct nombre_modelo from modelos order by nombre_modelo";
+            sql = "select * from modelos order by nombre_modelo";
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                modelo = rs.getString("nombre_modelo");
-                almod.add(modelo);
-                System.out.println(modelo);
+                id_modelo = rs.getInt("id_modelo");
+                nombre_modelo = rs.getString("nombre_modelo");
+                id_marca = rs.getInt("id_marca");
+                id_eficiencia = rs.getInt("id_eficiencia");
+                consumo_modelo = rs.getFloat("consumo_modelo");
+                emisiones_modelo = rs.getFloat("emisiones_modelo");
+                miModelo = new Modelo(id_modelo, nombre_modelo, id_marca, id_eficiencia, consumo_modelo, emisiones_modelo);
+                alModelos.add(miModelo);
             }
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
-        return almod;
+        return alModelos;
     }
     
-    public void crearModelo(String nombreModeloNuevo, int id_marca, int id_eficiencia, float consumo_modelo, float emisiones_modelo) throws SQLException, Exception {
+    /**
+     * Método usado para crear un nuevo registro de modelo en la BD.
+     * 
+     * @param nuevoModelo Objeto Modelo del que recoger los datos para guardar en BD.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public void crearModelo(Modelo nuevoModelo) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
         if (conexion == null) {
             this.abrirConexion();
@@ -141,17 +189,24 @@ public class GestorBBDD {
         try {
             sql = "insert into modelos (nombre_modelo, id_marca, id_eficiencia, consumo_modelo, emisiones_modelo) VALUES (?,?,?,?,?)";
             ps = conexion.prepareStatement(sql);
-            ps.setString(1, nombreModeloNuevo);
-            ps.setInt(2, id_marca);
-            ps.setInt(3, id_eficiencia);
-            ps.setFloat(4, consumo_modelo);
-            ps.setFloat(5, emisiones_modelo);
+            ps.setString(1, nuevoModelo.getNombre_modelo());
+            ps.setInt(2, nuevoModelo.getId_marca());
+            ps.setInt(3, nuevoModelo.getId_eficiencia());
+            ps.setFloat(4, nuevoModelo.getConsumo_modelo());
+            ps.setFloat(5, nuevoModelo.getEmisiones_modelo());
             ps.executeUpdate();
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
     }
     
+    /**
+     * Método usado para eliminar un registro de modelo a partir de su id, al ser clave primaria.
+     * @param id_modelo El id del modelo que se desea eliminar.
+     * @return Las filas que se han visto afectadas por la operación de borrado.
+     * @throws SQLException
+     * @throws Exception 
+     */
     public int borrarModelo (int id_modelo) throws SQLException, Exception {
         int filasAfectadas = 0;
         
