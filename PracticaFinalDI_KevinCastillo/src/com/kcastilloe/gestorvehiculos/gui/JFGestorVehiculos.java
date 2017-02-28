@@ -5,13 +5,14 @@ import com.kcastilloe.gestorvehiculos.modelo.Modelo;
 import com.kcastilloe.gestorvehiculos.persistencia.GestorBBDD;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * La ventana principal de la aplicación.
@@ -26,16 +27,21 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     ArrayList<Modelo> alModelos = new ArrayList();
     GestorBBDD ges = new GestorBBDD(this);
 
+    /* Los Vectores servirán de estructura para las tablas: */
+    private Vector vMarcas = new Vector();
+    /* Elige el modelo de las tablas, con los campos del Vector y 0 columnas iniciales: */
+    private DefaultTableModel dtmCrearMarcas = new DefaultTableModel(vMarcas, 0);
+    private DefaultTableModel dtmModificarMarcas = new DefaultTableModel(vMarcas, 0);
+    private DefaultTableModel dtmEliminarMarcas = new DefaultTableModel(vMarcas, 0);
+
     /**
      * Crea un nuevo JFGestorVehiculos.
      */
     public JFGestorVehiculos() {
         initComponents();
-        this.setBounds(300, 150, 400, 300);
-        this.setResizable(false);
+        this.setBounds(300, 150, 600, 400);
         bloquearElementosIniciales();
-        /* Se niega la redimensión de la ventana de la app. */
- /* Se añade un Listener para analizar cuándo se recibe algún cambio de ventana en el TabbedPane general. */
+        /* Se añade un Listener para analizar cuándo se recibe algún cambio de ventana en el TabbedPane general. */
         jtpVentanasModulos.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -155,19 +161,37 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         }
     }
 
+    private void limpiarTablas() {
+        /* Las tablas de Marcas tendrán 2 campos: */
+        vMarcas.clear();
+        vMarcas.add("ID marca");
+        vMarcas.add("Nombre marca");
+        /* Se asigna el modelo a las tablas de Marcas: */
+        jtTablaCrearMarca.setModel(dtmCrearMarcas);
+        dtmCrearMarcas.setRowCount(0);
+        
+        jtTablaModificarMarca.setModel(dtmModificarMarcas);
+        dtmModificarMarcas.setRowCount(0);
+        
+        jtTablaEliminarMarca.setModel(dtmEliminarMarcas);
+        dtmEliminarMarcas.setRowCount(0);
+
+    }
+
     /**
      * Método usado para llamar a la BD e insertar una nueva marca con los datos
      * que el usuario introduzca.
      */
     private void crearMarca() {
         boolean yaExiste = false;
-        String nombreNuevaMarca = jtfNombreNuevaMarca.getText();
-        if (nombreNuevaMarca.compareToIgnoreCase("") == 0) {
+        String nombreNuevaMarca = jtfNombreNuevaMarca.getText().toUpperCase();
+        if (nombreNuevaMarca.trim().compareToIgnoreCase("") == 0) {
             JOptionPane.showMessageDialog(
                     null,
                     "Introduzca un nombre válido para la marca.",
                     "Información",
                     JOptionPane.INFORMATION_MESSAGE);
+            reiniciarCamposCrearMarca();
         } else {
             miMarca = new Marca(nombreNuevaMarca);
             try {
@@ -212,9 +236,10 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      */
     private void modificarMarca() {
         boolean yaExiste = false;
-        String nombreModificadoMarca = jtfNuevoNombreModificar.getText();
+        String nombreModificadoMarca = jtfNuevoNombreModificar.getText().toUpperCase();
         int idMarcaModificable = 0;
-        if (nombreModificadoMarca.compareToIgnoreCase("") == 0) {
+        if (nombreModificadoMarca.trim().compareToIgnoreCase("") == 0) {
+            reiniciarCamposModificarMarca();
             JOptionPane.showMessageDialog(
                     null,
                     "Inserte un nuevo nombre válido para la marca.",
@@ -258,9 +283,59 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
         }
     }
-    
+
+    /**
+     * Método usado para llamar a la BD y eliminar la marca que seleccione el
+     * usuario con los datos introducidos.
+     */
     private void eliminarMarca() {
-        
+        boolean yaExiste = false;
+        String nombreEliminadoMarca = jtfIdMarcaEliminar.getText();
+        if (nombreEliminadoMarca.trim().compareToIgnoreCase("") == 0) {
+            reiniciarCamposEliminarMarca();
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Inserte un nuevo nombre válido para la marca a eliminar.",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            try {
+                miMarca = new Marca(nombreEliminadoMarca);
+                yaExiste = ges.existeMarca(miMarca);
+                if (!yaExiste) {
+                    reiniciarCamposEliminarMarca();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "No existe ninguna marca con ese nombre.",
+                            "Información",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    int idEliminadoMarca = ges.buscarMarcaPorNombre(nombreEliminadoMarca);
+                    miMarca = new Marca(idEliminadoMarca, nombreEliminadoMarca);
+                    ges.borrarMarca(miMarca.getId_marca());
+                    reiniciarCamposEliminarMarca();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Marca eliminada con éxito.",
+                            "Información",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (SQLException sqlex) {
+                reiniciarCamposEliminarMarca();
+                JOptionPane.showMessageDialog(
+                        null,
+                        sqlex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                reiniciarCamposEliminarMarca();
+                JOptionPane.showMessageDialog(
+                        null,
+                        ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     /**
@@ -269,6 +344,34 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      */
     private void reiniciarCamposCrearMarca() {
         jtfNombreNuevaMarca.setText("");
+        alMarcas.clear();
+        limpiarTablas();
+        try {
+            alMarcas = ges.buscarMarcas();
+            if (alMarcas.size() == 0) {
+                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
+                ges.resetearAutoincrementalMarca();
+            } else {
+                for (int i = 0; i < alMarcas.size(); i++) {
+                    /* Incrementa filas: */
+                    dtmCrearMarcas.setRowCount(dtmCrearMarcas.getRowCount() + 1);
+                    jtTablaCrearMarca.setValueAt(alMarcas.get(i).getId_marca(), i, 0);
+                    jtTablaCrearMarca.setValueAt(alMarcas.get(i).getNombre_marca(), i, 1);
+                }
+            }
+        } catch (SQLException sqlex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    sqlex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -280,6 +383,34 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jtfNuevoNombreModificar.setText("");
         jtfNuevoNombreModificar.setEnabled(false);
         jbModificarMarca.setEnabled(false);
+        alMarcas.clear();
+        limpiarTablas();
+        try {
+            alMarcas = ges.buscarMarcas();
+            if (alMarcas.size() == 0) {
+                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
+                ges.resetearAutoincrementalMarca();
+            } else {
+                for (int i = 0; i < alMarcas.size(); i++) {
+                    /* Incrementa filas: */
+                    dtmModificarMarcas.setRowCount(dtmModificarMarcas.getRowCount() + 1);
+                    jtTablaModificarMarca.setValueAt(alMarcas.get(i).getId_marca(), i, 0);
+                    jtTablaModificarMarca.setValueAt(alMarcas.get(i).getNombre_marca(), i, 1);
+                }
+            }
+        } catch (SQLException sqlex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    sqlex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -287,7 +418,35 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      * cara a una nueva eliminación.
      */
     private void reiniciarCamposEliminarMarca() {
-
+        jtfIdMarcaEliminar.setText("");
+        alMarcas.clear();
+        limpiarTablas();
+        try {
+            alMarcas = ges.buscarMarcas();
+            if (alMarcas.size() == 0) {
+                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
+                ges.resetearAutoincrementalMarca();
+            } else {
+                for (int i = 0; i < alMarcas.size(); i++) {
+                    /* Incrementa filas: */
+                    dtmEliminarMarcas.setRowCount(dtmEliminarMarcas.getRowCount() + 1);
+                    jtTablaEliminarMarca.setValueAt(alMarcas.get(i).getId_marca(), i, 0);
+                    jtTablaEliminarMarca.setValueAt(alMarcas.get(i).getNombre_marca(), i, 1);
+                }
+            }
+        } catch (SQLException sqlex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    sqlex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -327,6 +486,8 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlNombreNuevaMarca = new javax.swing.JLabel();
         jtfNombreNuevaMarca = new javax.swing.JTextField();
         jbCrearMarca = new javax.swing.JButton();
+        jspTablaCrearMarca = new javax.swing.JScrollPane();
+        jtTablaCrearMarca = new javax.swing.JTable();
         jpModificarMarca = new javax.swing.JPanel();
         jlTituloModificarMarca = new javax.swing.JLabel();
         jsSeparadorModificarMarca = new javax.swing.JSeparator();
@@ -335,7 +496,16 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlNuevoNombreModificar = new javax.swing.JLabel();
         jtfNuevoNombreModificar = new javax.swing.JTextField();
         jbModificarMarca = new javax.swing.JButton();
+        jspTablaModificarMarca = new javax.swing.JScrollPane();
+        jtTablaModificarMarca = new javax.swing.JTable();
         jpEliminarMarca = new javax.swing.JPanel();
+        jlTituloEliminarMarca = new javax.swing.JLabel();
+        jsSeparadorEliminarMarca = new javax.swing.JSeparator();
+        jlIdMarcaEliminar = new javax.swing.JLabel();
+        jtfIdMarcaEliminar = new javax.swing.JTextField();
+        jbEliminarMarca = new javax.swing.JButton();
+        jspTablaEliminarMarca = new javax.swing.JScrollPane();
+        jtTablaEliminarMarca = new javax.swing.JTable();
         jpModelos = new javax.swing.JPanel();
         jtpSeccionesModelos = new javax.swing.JTabbedPane();
         jpCrearModelo = new javax.swing.JPanel();
@@ -347,6 +517,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jmInfo = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(600, 400));
 
         jlTituloCrearMarca.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jlTituloCrearMarca.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -361,6 +532,19 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
         });
 
+        jtTablaCrearMarca.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jspTablaCrearMarca.setViewportView(jtTablaCrearMarca);
+
         javax.swing.GroupLayout jpCrearMarcaLayout = new javax.swing.GroupLayout(jpCrearMarca);
         jpCrearMarca.setLayout(jpCrearMarcaLayout);
         jpCrearMarcaLayout.setHorizontalGroup(
@@ -368,15 +552,16 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             .addGroup(jpCrearMarcaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpCrearMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
                     .addComponent(jsSeparadorCrearMarca)
                     .addComponent(jlTituloCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jpCrearMarcaLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearMarcaLayout.createSequentialGroup()
                         .addComponent(jlNombreNuevaMarca)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfNombreNuevaMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE))
+                        .addComponent(jtfNombreNuevaMarca))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearMarcaLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jbCrearMarca)))
+                        .addComponent(jbCrearMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jpCrearMarcaLayout.setVerticalGroup(
@@ -386,13 +571,15 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addComponent(jlTituloCrearMarca)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorCrearMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpCrearMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlNombreNuevaMarca)
                     .addComponent(jtfNombreNuevaMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbCrearMarca)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jtpSeccionesMarcas.addTab("Crear marca", jpCrearMarca);
@@ -422,23 +609,37 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
         });
 
+        jtTablaModificarMarca.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jspTablaModificarMarca.setViewportView(jtTablaModificarMarca);
+
         javax.swing.GroupLayout jpModificarMarcaLayout = new javax.swing.GroupLayout(jpModificarMarca);
         jpModificarMarca.setLayout(jpModificarMarcaLayout);
         jpModificarMarcaLayout.setHorizontalGroup(
             jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpModificarMarcaLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jlTituloModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jsSeparadorModificarMarca)
                     .addGroup(jpModificarMarcaLayout.createSequentialGroup()
                         .addComponent(jlNombreActualModificar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcbMarcasModificar, 0, 192, Short.MAX_VALUE))
+                        .addComponent(jcbMarcasModificar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jpModificarMarcaLayout.createSequentialGroup()
-                        .addComponent(jlNuevoNombreModificar)
+                        .addContainerGap()
+                        .addComponent(jlNuevoNombreModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jtfNuevoNombreModificar))
+                    .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpModificarMarcaLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jbModificarMarca)))
@@ -455,26 +656,80 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlNombreActualModificar)
                     .addComponent(jcbMarcasModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jlNuevoNombreModificar)
-                    .addComponent(jtfNuevoNombreModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtfNuevoNombreModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlNuevoNombreModificar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbModificarMarca)
-                .addGap(19, 19, 19))
+                .addContainerGap())
         );
 
         jtpSeccionesMarcas.addTab("Modificar marca", jpModificarMarca);
+
+        jlTituloEliminarMarca.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jlTituloEliminarMarca.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlTituloEliminarMarca.setText("ELIMINAR MARCA");
+
+        jlIdMarcaEliminar.setText("Nombre de la marca a eliminar:");
+
+        jbEliminarMarca.setText("Eliminar marca");
+        jbEliminarMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEliminarMarcaActionPerformed(evt);
+            }
+        });
+
+        jtTablaEliminarMarca.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jspTablaEliminarMarca.setViewportView(jtTablaEliminarMarca);
 
         javax.swing.GroupLayout jpEliminarMarcaLayout = new javax.swing.GroupLayout(jpEliminarMarca);
         jpEliminarMarca.setLayout(jpEliminarMarcaLayout);
         jpEliminarMarcaLayout.setHorizontalGroup(
             jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGroup(jpEliminarMarcaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
+                    .addComponent(jlTituloEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jsSeparadorEliminarMarca)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarMarcaLayout.createSequentialGroup()
+                        .addComponent(jlIdMarcaEliminar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtfIdMarcaEliminar))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarMarcaLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jbEliminarMarca)))
+                .addContainerGap())
         );
         jpEliminarMarcaLayout.setVerticalGroup(
             jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 225, Short.MAX_VALUE)
+            .addGroup(jpEliminarMarcaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jlTituloEliminarMarca)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jsSeparadorEliminarMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jlIdMarcaEliminar)
+                    .addComponent(jtfIdMarcaEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbEliminarMarca)
+                .addContainerGap())
         );
 
         jtpSeccionesMarcas.addTab("Eliminar marca", jpEliminarMarca);
@@ -496,11 +751,11 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jpCrearModelo.setLayout(jpCrearModeloLayout);
         jpCrearModeloLayout.setHorizontalGroup(
             jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGap(0, 596, Short.MAX_VALUE)
         );
         jpCrearModeloLayout.setVerticalGroup(
             jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 225, Short.MAX_VALUE)
+            .addGap(0, 326, Short.MAX_VALUE)
         );
 
         jtpSeccionesModelos.addTab("Crear modelo", jpCrearModelo);
@@ -509,11 +764,11 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jpModificarModelo.setLayout(jpModificarModeloLayout);
         jpModificarModeloLayout.setHorizontalGroup(
             jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGap(0, 596, Short.MAX_VALUE)
         );
         jpModificarModeloLayout.setVerticalGroup(
             jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 225, Short.MAX_VALUE)
+            .addGap(0, 326, Short.MAX_VALUE)
         );
 
         jtpSeccionesModelos.addTab("Modificar modelo", jpModificarModelo);
@@ -522,11 +777,11 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jpEliminarModelo.setLayout(jpEliminarModeloLayout);
         jpEliminarModeloLayout.setHorizontalGroup(
             jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+            .addGap(0, 596, Short.MAX_VALUE)
         );
         jpEliminarModeloLayout.setVerticalGroup(
             jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 225, Short.MAX_VALUE)
+            .addGap(0, 326, Short.MAX_VALUE)
         );
 
         jtpSeccionesModelos.addTab("Eliminar modelo", jpEliminarModelo);
@@ -604,6 +859,10 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         modificarMarca();
     }//GEN-LAST:event_jbModificarMarcaActionPerformed
 
+    private void jbEliminarMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEliminarMarcaActionPerformed
+        eliminarMarca();
+    }//GEN-LAST:event_jbEliminarMarcaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -641,12 +900,15 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jbCrearMarca;
+    private javax.swing.JButton jbEliminarMarca;
     private javax.swing.JButton jbModificarMarca;
     private javax.swing.JComboBox<String> jcbMarcasModificar;
+    private javax.swing.JLabel jlIdMarcaEliminar;
     private javax.swing.JLabel jlNombreActualModificar;
     private javax.swing.JLabel jlNombreNuevaMarca;
     private javax.swing.JLabel jlNuevoNombreModificar;
     private javax.swing.JLabel jlTituloCrearMarca;
+    private javax.swing.JLabel jlTituloEliminarMarca;
     private javax.swing.JLabel jlTituloModificarMarca;
     private javax.swing.JMenu jmInfo;
     private javax.swing.JMenu jmModulos;
@@ -661,7 +923,15 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private javax.swing.JPanel jpModificarMarca;
     private javax.swing.JPanel jpModificarModelo;
     private javax.swing.JSeparator jsSeparadorCrearMarca;
+    private javax.swing.JSeparator jsSeparadorEliminarMarca;
     private javax.swing.JSeparator jsSeparadorModificarMarca;
+    private javax.swing.JScrollPane jspTablaCrearMarca;
+    private javax.swing.JScrollPane jspTablaEliminarMarca;
+    private javax.swing.JScrollPane jspTablaModificarMarca;
+    private javax.swing.JTable jtTablaCrearMarca;
+    private javax.swing.JTable jtTablaEliminarMarca;
+    private javax.swing.JTable jtTablaModificarMarca;
+    private javax.swing.JTextField jtfIdMarcaEliminar;
     private javax.swing.JTextField jtfNombreNuevaMarca;
     private javax.swing.JTextField jtfNuevoNombreModificar;
     private javax.swing.JTabbedPane jtpSeccionesMarcas;
