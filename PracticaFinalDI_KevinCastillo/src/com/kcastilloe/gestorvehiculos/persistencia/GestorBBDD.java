@@ -91,7 +91,7 @@ public class GestorBBDD {
             this.abrirConexion();
         }
         try {
-            sql = "select * from marcas order by nombre_marca";
+            sql = "select * from marcas order by id_marca";
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -142,9 +142,10 @@ public class GestorBBDD {
         }
         try {
             /* NOTA: EL ID_MARCA HAY QUE PASARLO COMO PARÁMETRO EN LUGAR DE HARDCODE. RECOGERLO CON UN OBJETO MARCA DESDE LA INTERFAZ. */
-            sql = "update marcas set nombre_marca = ? where id_marca = 1";
+            sql = "update marcas set nombre_marca = ? where id_marca = ?";
             ps = conexion.prepareStatement(sql);
             ps.setString(1, marcaModificada.getNombre_marca());
+            ps.setInt(2, marcaModificada.getId_marca());
             ps.executeUpdate();
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
