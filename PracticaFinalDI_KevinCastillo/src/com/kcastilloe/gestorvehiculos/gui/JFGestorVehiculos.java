@@ -26,9 +26,14 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     Modelo miModelo;
     ArrayList<Modelo> alModelos = new ArrayList();
     GestorBBDD ges = new GestorBBDD(this);
+    
+    private boolean focoCrearMarca = false;
+    private boolean focoModificarMarca = false;
+    private boolean focoEliminarMarca = false;
 
     /* Los Vectores servirán de estructura para las tablas: */
     private Vector vMarcas = new Vector();
+
     /* Elige el modelo de las tablas, con los campos del Vector y 0 columnas iniciales: */
     private DefaultTableModel dtmCrearMarcas = new DefaultTableModel(vMarcas, 0);
     private DefaultTableModel dtmModificarMarcas = new DefaultTableModel(vMarcas, 0);
@@ -41,6 +46,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         initComponents();
         this.setBounds(300, 150, 600, 400);
         bloquearElementosIniciales();
+        vMarcas.clear();
+        vMarcas.add("ID marca");
+        vMarcas.add("Nombre marca");
         /* Se añade un Listener para analizar cuándo se recibe algún cambio de ventana en el TabbedPane general. */
         jtpVentanasModulos.addChangeListener(new ChangeListener() {
             @Override
@@ -163,16 +171,14 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
     private void limpiarTablas() {
         /* Las tablas de Marcas tendrán 2 campos: */
-        vMarcas.clear();
-        vMarcas.add("ID marca");
-        vMarcas.add("Nombre marca");
-        /* Se asigna el modelo a las tablas de Marcas: */
+
+ /* Se asigna el modelo a las tablas de Marcas: */
         jtTablaCrearMarca.setModel(dtmCrearMarcas);
         dtmCrearMarcas.setRowCount(0);
-        
+
         jtTablaModificarMarca.setModel(dtmModificarMarcas);
         dtmModificarMarcas.setRowCount(0);
-        
+
         jtTablaEliminarMarca.setModel(dtmEliminarMarcas);
         dtmEliminarMarcas.setRowCount(0);
 
