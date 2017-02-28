@@ -54,6 +54,13 @@ public class GestorBBDD {
         }
     }
     
+    /**
+     * Método que evalúa si existe la marca seleccionada por el usuario para evitar redundancia de datos.
+     * @param marcaConsulta El nombre de la marca de la que se desea saber si existe.
+     * @return Booleano para evaluar si existe (true) o no (false).
+     * @throws SQLException
+     * @throws Exception 
+     */
     public boolean existeMarca(Marca marcaConsulta) throws SQLException, Exception{
         boolean yaExiste = false;
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
@@ -104,6 +111,33 @@ public class GestorBBDD {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
         return alMarcas;
+    }
+    
+    /**
+     * Método usado para devolver el id de la marca correspondiente al nombre de la marca facilitado para eliminar posteriormente por id_marca por ser clave primaria.
+     * @param nombreBusqueda El nombre de la marca de la que se desea saber el id.
+     * @return El id de la marca correspondiente.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public int buscarMarcaPorNombre(String nombreBusqueda) throws SQLException, Exception{
+        int idBusqueda = 0;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from marcas where nombre_marca = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, nombreBusqueda);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                idBusqueda = rs.getInt("id_marca");
+            }
+            return idBusqueda;
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
     }
     
     /**
@@ -171,12 +205,30 @@ public class GestorBBDD {
             sql = "delete from marcas where id_marca = " + id_marca;
             ps = conexion.prepareStatement(sql);
             filasAfectadas = ps.executeUpdate();
-            //System.out.println("Registros eliminados: " + filasAfectadas + "\n");
             return filasAfectadas;
         } catch (SQLException ex) {
             System.out.println("No se ha encontrado la base de datos.");
         }
         return 9;
+    }
+    
+    /**
+     * Método usado para resetear el autoincremental de id_marca en caso de no haber registros por cuestiones de estética.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public void resetearAutoincrementalMarca() throws SQLException, Exception{
+         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "alter table marcas auto_increment = 1";
+            ps = conexion.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
     }
     
     /**
