@@ -23,8 +23,8 @@ public class Modelo {
      * @param consumo_modelo El consumo del modelo, expresado en litros/100km.
      * @param emisiones_modelo Las emisiones del modleo, expresadas en gCO2/km.
      */
-    public Modelo(String nombreModelo, int id_marca, int id_eficiencia, float consumo_modelo, float emisiones_modelo) {
-        this.nombre_modelo = nombreModelo;
+    public Modelo(String nombre_modelo, int id_marca, int id_eficiencia, float consumo_modelo, float emisiones_modelo) {
+        this.nombre_modelo = nombre_modelo;
         this.id_marca = id_marca;
         this.id_eficiencia = id_eficiencia;
         this.consumo_modelo = consumo_modelo;
@@ -41,13 +41,33 @@ public class Modelo {
      * @param consumo_modelo El consumo del modelo, expresado en litros/100km.
      * @param emisiones_modelo Las emisiones del modleo, expresadas en gCO2/km.
      */
-    public Modelo(int id_modelo, String nombreModelo, int id_marca, int id_eficiencia, float consumo_modelo, float emisiones_modelo) {
+    public Modelo(int id_modelo, String nombre_modelo, int id_marca, int id_eficiencia, float consumo_modelo, float emisiones_modelo) {
         this.id_modelo = id_modelo;
-        this.nombre_modelo = nombreModelo;
+        this.nombre_modelo = nombre_modelo;
         this.id_marca = id_marca;
         this.id_eficiencia = id_eficiencia;
         this.consumo_modelo = consumo_modelo;
         this.emisiones_modelo = emisiones_modelo;
+    }
+    
+    /**
+     * Constructor usado para la búsqueda individual de cara a eliminación de datos en BD.
+     * 
+     * @param nombre_modelo El nombre del modelo a eliminar.
+     */
+    public Modelo(String nombre_modelo){
+        this.nombre_modelo = nombre_modelo;
+    }
+    
+    /**
+     * Constructor usado para la eliminación de datos en BD.
+     * 
+     * @param id_modelo El id del modelo a eliminar.
+     * @param nombre_modelo El nombre del modelo a eliminar.
+     */
+    public Modelo(int id_modelo, String nombre_modelo){
+        this.id_modelo = id_modelo;
+        this.nombre_modelo = nombre_modelo;
     }
 
     public int getId_modelo() {
@@ -97,7 +117,4 @@ public class Modelo {
     public void setEmisiones_modelo(float emisiones_modelo) {
         this.emisiones_modelo = emisiones_modelo;
     }
-
-    
-    
 }
