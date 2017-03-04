@@ -54,6 +54,8 @@ public class GestorBBDD {
         }
     }
     
+    /* Métodos relacionados con la tabla Marcas. */
+    
     /**
      * Método que evalúa si existe la marca seleccionada por el usuario para evitar redundancia de datos.
      * @param marcaConsulta El nombre de la marca de la que se desea saber si existe.
@@ -141,6 +143,33 @@ public class GestorBBDD {
     }
     
     /**
+     * Método usado para devolver el nombre de la marca correspondiente al id de la marca facilitado.
+     * @param idBusqueda El id de la marca de la que se desea sabes su nombre.
+     * @return El nombre de la marca correspondiente.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public String buscarMarcaPorId(int idBusqueda) throws SQLException, Exception{
+        String nombreBusqueda = null;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from marcas where id_marca = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, idBusqueda);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                nombreBusqueda = rs.getString("nombre_marca");
+            }
+            return nombreBusqueda;
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+    }
+    
+    /**
      * Método usado para crear un nuevo registro de marca en la BD.
      * 
      * @param nuevaMarca Objeto Marca del que recoger los datos para guardar en BD.
@@ -213,7 +242,7 @@ public class GestorBBDD {
     }
     
     /**
-     * Método usado para resetear el autoincremental de id_marca en caso de no haber registros por cuestiones de estética.
+     * Método usado para resetear el autoincremental de id_marca por cuestiones de estética en caso de no haber registros.
      * @throws SQLException
      * @throws Exception 
      */
@@ -229,6 +258,35 @@ public class GestorBBDD {
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
+    }
+    
+    /* Métodos relacionados con la tabla Modelos. */
+    
+    /**
+     * Método que evalúa si existe el modelo seleccionado por el usuario para evitar redundancia de datos.
+     * @param modeloConsulta El nombre del modelo del que se desea saber si existe.
+     * @return Booleano para evaluar si existe (true) o no (false).
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public boolean existeModelo(Modelo modeloConsulta) throws SQLException, Exception{
+        boolean yaExiste = false;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from modelos where nombre_modelo = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, modeloConsulta.getNombre_modelo());
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                yaExiste = true;
+            }
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+        return yaExiste;
     }
     
     /**
@@ -269,6 +327,60 @@ public class GestorBBDD {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
         return alModelos;
+    }
+    
+     /**
+     * Método usado para devolver el id del modelo correspondiente al nombre del modelo facilitado para eliminar posteriormente por id_modelo por ser clave primaria.
+     * @param nombreBusqueda El nombre del modelo de la que se desea saber el id.
+     * @return El id del modelo correspondiente.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public int buscarModeloPorNombre(String nombreBusqueda) throws SQLException, Exception{
+        int idBusqueda = 0;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from modelos where nombre_modelo = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, nombreBusqueda);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                idBusqueda = rs.getInt("id_modelo");
+            }
+            return idBusqueda;
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+    }
+    
+     /**
+     * Método usado para devolver el nombre del modelo correspondiente al id del modelo facilitado.
+     * @param idBusqueda El id del modelo de la que se desea sabes su nombre.
+     * @return El nombre del modelo correspondiente.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public String buscarModeloPorId(int idBusqueda) throws SQLException, Exception{
+        String nombreBusqueda = null;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from modelos where id_modelo = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, idBusqueda);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                nombreBusqueda = rs.getString("nombre_modelo");
+            }
+            return nombreBusqueda;
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
     }
     
     /**
@@ -348,5 +460,53 @@ public class GestorBBDD {
             System.out.println("No se ha encontrado la base de datos.");
         }
         return 9;
+    }
+    
+    /**
+     * Método usado para resetear el autoincremental de id_modelo por cuestiones de estética en caso de no haber registros.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public void resetearAutoincrementalModelo() throws SQLException, Exception{
+         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "alter table modelos auto_increment = 1";
+            ps = conexion.prepareStatement(sql);
+            ps.executeUpdate();
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+    }
+    
+    /* Métodos relacionados con la tabla Eficiencias. */
+    
+    /**
+     * Método usado para recuperar el nombre de una eficiencia según su id.
+     * @param idBusqueda El id de la eficiencia de la que se desea conocer el nombre
+     * @return El nombre de la eficiencia correspondiente.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public String buscarEficienciasPorId(int idBusqueda) throws SQLException, Exception{
+        String nombreBusqueda = null;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from eficiencias where id_eficiencia = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, idBusqueda);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                nombreBusqueda = rs.getString("nombre_marca");
+            }
+            return nombreBusqueda;
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
     }
 }
