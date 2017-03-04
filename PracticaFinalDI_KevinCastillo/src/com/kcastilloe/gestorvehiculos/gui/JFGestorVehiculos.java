@@ -29,23 +29,38 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
     /* Los Vectores servirán de estructura para las tablas: */
     private Vector vMarcas = new Vector();
+    private Vector vModelos = new Vector();
 
     /* Elige el modelo de las tablas, con los campos del Vector y 0 columnas iniciales: */
-    private DefaultTableModel dtmMarcas = new DefaultTableModel(vMarcas, 0);;
+    private DefaultTableModel dtmMarcas = new DefaultTableModel(vMarcas, 0);
+    private DefaultTableModel dtmModelos = new DefaultTableModel(vModelos, 0);
 
     /**
      * Crea un nuevo JFGestorVehiculos.
      */
     public JFGestorVehiculos() {
         initComponents();
-        this.setBounds(300, 150, 600, 400);
+        this.setBounds(300, 150, 800, 600);
         bloquearElementosIniciales();
+        /* Columnas de las tablas de Marcas: */
         vMarcas.clear();
         vMarcas.add("ID marca");
         vMarcas.add("Nombre marca");        
         jtTablaCrearMarca.setModel(dtmMarcas);
         jtTablaModificarMarca.setModel(dtmMarcas);
         jtTablaEliminarMarca.setModel(dtmMarcas);
+        
+        /* Columnas de las tablas de Modelos: */
+        vModelos.clear();
+        vModelos.add("Nombre marca");
+        vModelos.add("Nombre modelo");
+        vModelos.add("Consumo (L/100km)");
+        vModelos.add("Emisiones (gCO2/km)");
+        vModelos.add("Eficiencia");
+        jtTablaCrearModelo.setModel(dtmModelos);
+        jtTablaModificarModelo.setModel(dtmModelos);
+        jtTablaEliminarModelo.setModel(dtmModelos);
+        
         /* Se añade un Listener para analizar cuándo se recibe algún cambio de ventana en el TabbedPane general. */
 //        jtpVentanasModulos.addChangeListener(new ChangeListener() {
 //            @Override
@@ -166,7 +181,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private void limpiarTablas() {
         /* Se resetean las filas de las tablas: */
         dtmMarcas.setRowCount(0);
-
+        dtmModelos.setRowCount(0);
     }
 
     /**
@@ -231,14 +246,14 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         /* Evalúa la opción seleccionada en el JCombobox. */
         String marcaSeleccionada = (String) jcbMarcasModificar.getSelectedItem();
         if (marcaSeleccionada.compareToIgnoreCase("Seleccione una marca...") == 0) {
-            jtfNuevoNombreModificar.setText("");
+            jtfNuevoNombreMarcaModificar.setText("");
             JOptionPane.showMessageDialog(
                     null,
                     "Seleccione una marca válida en el selector desplegable.",
                     "Información",
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
-            String nombreModificadoMarca = jtfNuevoNombreModificar.getText().toUpperCase();
+            String nombreModificadoMarca = jtfNuevoNombreMarcaModificar.getText().toUpperCase();
             int idMarcaModificable = 0;
             if (nombreModificadoMarca.trim().compareToIgnoreCase("") == 0) {
                 reiniciarCamposModificarMarca();
@@ -293,12 +308,12 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      */
     private void eliminarMarca() {
         boolean yaExiste = false;
-        String nombreEliminadoMarca = jtfIdMarcaEliminar.getText();
+        String nombreEliminadoMarca = jtfNombreMarcaEliminar.getText();
         if (nombreEliminadoMarca.trim().compareToIgnoreCase("") == 0) {
             reiniciarCamposEliminarMarca();
             JOptionPane.showMessageDialog(
                     null,
-                    "Inserte un nuevo nombre válido para la marca a eliminar.",
+                    "Inserte un nuevo ID válido para la marca a eliminar.",
                     "Información",
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -309,7 +324,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     reiniciarCamposEliminarMarca();
                     JOptionPane.showMessageDialog(
                             null,
-                            "No existe ninguna marca con ese nombre.",
+                            "No existe ninguna marca con ese ID.",
                             "Información",
                             JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -383,7 +398,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      */
     private void reiniciarCamposModificarMarca() {
         jcbMarcasModificar.setSelectedIndex(0);
-        jtfNuevoNombreModificar.setText("");
+        jtfNuevoNombreMarcaModificar.setText("");
         alMarcas.clear();
         limpiarTablas();
         try {
@@ -419,7 +434,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      * cara a una nueva eliminación.
      */
     private void reiniciarCamposEliminarMarca() {
-        jtfIdMarcaEliminar.setText("");
+        jtfNombreMarcaEliminar.setText("");
         alMarcas.clear();
         limpiarTablas();
         try {
@@ -455,7 +470,45 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      * a una nueva inserción.
      */
     private void reiniciarCamposCrearModelo() {
-
+        jtfNombreNuevoModelo.setText("");
+        jtfConsumoNuevoModelo.setText("");
+        jtfEmisionesNuevoModelo.setText("");
+        jcbMarcaNuevoModelo.setSelectedIndex(0);
+        jcbEficienciaNuevoModelo.setSelectedIndex(0);
+        alModelos.clear();
+        limpiarTablas();
+        try {
+            alModelos = ges.buscarMarcas();
+            if (alModelos.size() == 0) {
+                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
+                ges.resetearAutoincrementalMarca();
+            } else {
+                for (int i = 0; i < alModelos.size(); i++) {
+                    /* Incrementa filas: */
+                    dtmMarcas.setRowCount(dtmMarcas.getRowCount() + 1);
+                    /* Recupera el nombre de la marca y la eficiencia según sus ID's: */
+                    String nombreMarca = ges.buscarMarcaPorId(alModelos.get(i).getId_marca());
+                    String nombreEficiencia = ges.buscarEficienciasPorId(alModelos.get(i).getId_eficiencia());
+                    jtTablaCrearMarca.setValueAt(nombreMarca, i, 0);
+                    jtTablaCrearMarca.setValueAt(alModelos.get(i).getNombre_modelo(), i, 1);
+                    jtTablaCrearMarca.setValueAt(alModelos.get(i).getConsumo_modelo(), i, 2);
+                    jtTablaCrearMarca.setValueAt(alModelos.get(i).getConsumo_modelo(), i, 3);
+                    jtTablaCrearMarca.setValueAt(nombreEficiencia, i, 4);
+                }
+            }
+        } catch (SQLException sqlex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    sqlex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -484,29 +537,29 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jpCrearMarca = new javax.swing.JPanel();
         jlTituloCrearMarca = new javax.swing.JLabel();
         jsSeparadorCrearMarca = new javax.swing.JSeparator();
+        jspTablaCrearMarca = new javax.swing.JScrollPane();
+        jtTablaCrearMarca = new javax.swing.JTable();
         jlNombreNuevaMarca = new javax.swing.JLabel();
         jtfNombreNuevaMarca = new javax.swing.JTextField();
         jbCrearMarca = new javax.swing.JButton();
-        jspTablaCrearMarca = new javax.swing.JScrollPane();
-        jtTablaCrearMarca = new javax.swing.JTable();
         jpModificarMarca = new javax.swing.JPanel();
         jlTituloModificarMarca = new javax.swing.JLabel();
         jsSeparadorModificarMarca = new javax.swing.JSeparator();
-        jlNombreActualModificar = new javax.swing.JLabel();
+        jlNombreMarcaActualModificar = new javax.swing.JLabel();
         jcbMarcasModificar = new javax.swing.JComboBox<>();
-        jlNuevoNombreModificar = new javax.swing.JLabel();
-        jtfNuevoNombreModificar = new javax.swing.JTextField();
-        jbModificarMarca = new javax.swing.JButton();
         jspTablaModificarMarca = new javax.swing.JScrollPane();
         jtTablaModificarMarca = new javax.swing.JTable();
+        jlNuevoNombreMarcaModificar = new javax.swing.JLabel();
+        jtfNuevoNombreMarcaModificar = new javax.swing.JTextField();
+        jbModificarMarca = new javax.swing.JButton();
         jpEliminarMarca = new javax.swing.JPanel();
         jlTituloEliminarMarca = new javax.swing.JLabel();
         jsSeparadorEliminarMarca = new javax.swing.JSeparator();
-        jlIdMarcaEliminar = new javax.swing.JLabel();
-        jtfIdMarcaEliminar = new javax.swing.JTextField();
-        jbEliminarMarca = new javax.swing.JButton();
         jspTablaEliminarMarca = new javax.swing.JScrollPane();
         jtTablaEliminarMarca = new javax.swing.JTable();
+        jlNombreMarcaEliminar = new javax.swing.JLabel();
+        jtfNombreMarcaEliminar = new javax.swing.JTextField();
+        jbEliminarMarca = new javax.swing.JButton();
         jpModelos = new javax.swing.JPanel();
         jtpSeccionesModelos = new javax.swing.JTabbedPane();
         jpCrearModelo = new javax.swing.JPanel();
@@ -516,11 +569,35 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jtTablaCrearModelo = new javax.swing.JTable();
         jlNombreNuevoModelo = new javax.swing.JLabel();
         jtfNombreNuevoModelo = new javax.swing.JTextField();
+        jlMarcaNuevoModelo = new javax.swing.JLabel();
+        jcbMarcaNuevoModelo = new javax.swing.JComboBox<>();
+        jlConsumoNuevoModelo = new javax.swing.JLabel();
+        jtfConsumoNuevoModelo = new javax.swing.JTextField();
+        jlUnidadesConsumoNuevoModelo = new javax.swing.JLabel();
+        jlEmisionesNuevoModelo = new javax.swing.JLabel();
+        jtfEmisionesNuevoModelo = new javax.swing.JTextField();
+        jlUnidadesEmisionesNuevoModelo = new javax.swing.JLabel();
+        jlEficienciaNuevoModelo = new javax.swing.JLabel();
+        jcbEficienciaNuevoModelo = new javax.swing.JComboBox<>();
         jbCrearModelo = new javax.swing.JButton();
         jpModificarModelo = new javax.swing.JPanel();
         jlTituloModificarModelo = new javax.swing.JLabel();
         jsSeparadorModificarModelo = new javax.swing.JSeparator();
+        jlNombreModeloActualModificar = new javax.swing.JLabel();
+        jcbModelosModificar = new javax.swing.JComboBox<>();
+        jspTablaModificarModelo = new javax.swing.JScrollPane();
+        jtTablaModificarModelo = new javax.swing.JTable();
+        jlNuevoNombreModeloModificar = new javax.swing.JLabel();
+        jtfNuevoNombreModeloModificar = new javax.swing.JTextField();
+        jbModificarModelo = new javax.swing.JButton();
         jpEliminarModelo = new javax.swing.JPanel();
+        jlTituloEliminarModelo = new javax.swing.JLabel();
+        jsSeparadorEliminarModelo = new javax.swing.JSeparator();
+        jspTablaEliminarModelo = new javax.swing.JScrollPane();
+        jtTablaEliminarModelo = new javax.swing.JTable();
+        jlNombreModeloEliminar = new javax.swing.JLabel();
+        jtfNombreModeloEliminar = new javax.swing.JTextField();
+        jbEliminarModelo = new javax.swing.JButton();
         jmbBarraMenu = new javax.swing.JMenuBar();
         jmModulos = new javax.swing.JMenu();
         jmiConectar = new javax.swing.JMenuItem();
@@ -532,15 +609,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlTituloCrearMarca.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jlTituloCrearMarca.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlTituloCrearMarca.setText("CREAR MARCA");
-
-        jlNombreNuevaMarca.setText("Nombre de la nueva marca:");
-
-        jbCrearMarca.setText("Crear nueva marca");
-        jbCrearMarca.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbCrearMarcaActionPerformed(evt);
-            }
-        });
 
         jtTablaCrearMarca.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -555,6 +623,15 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         ));
         jspTablaCrearMarca.setViewportView(jtTablaCrearMarca);
 
+        jlNombreNuevaMarca.setText("Nombre de la nueva marca:");
+
+        jbCrearMarca.setText("Crear nueva marca");
+        jbCrearMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbCrearMarcaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpCrearMarcaLayout = new javax.swing.GroupLayout(jpCrearMarca);
         jpCrearMarca.setLayout(jpCrearMarcaLayout);
         jpCrearMarcaLayout.setHorizontalGroup(
@@ -562,7 +639,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             .addGroup(jpCrearMarcaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpCrearMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
+                    .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
                     .addComponent(jsSeparadorCrearMarca)
                     .addComponent(jlTituloCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearMarcaLayout.createSequentialGroup()
@@ -582,7 +659,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorCrearMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpCrearMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlNombreNuevaMarca)
@@ -598,21 +675,12 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlTituloModificarMarca.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlTituloModificarMarca.setText("MODIFICAR MARCA");
 
-        jlNombreActualModificar.setText("Seleccione la marca a modificar:");
+        jlNombreMarcaActualModificar.setText("Seleccione la marca a modificar:");
 
         jcbMarcasModificar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una marca..." }));
         jcbMarcasModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcbMarcasModificarActionPerformed(evt);
-            }
-        });
-
-        jlNuevoNombreModificar.setText("Nuevo nombre de la marca:");
-
-        jbModificarMarca.setText("Modificar marca");
-        jbModificarMarca.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbModificarMarcaActionPerformed(evt);
             }
         });
 
@@ -629,27 +697,40 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         ));
         jspTablaModificarMarca.setViewportView(jtTablaModificarMarca);
 
+        jlNuevoNombreMarcaModificar.setText("Nuevo nombre de la marca:");
+
+        jbModificarMarca.setText("Modificar marca");
+        jbModificarMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbModificarMarcaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpModificarMarcaLayout = new javax.swing.GroupLayout(jpModificarMarca);
         jpModificarMarca.setLayout(jpModificarMarcaLayout);
         jpModificarMarcaLayout.setHorizontalGroup(
             jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jpModificarMarcaLayout.createSequentialGroup()
-                .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jlTituloModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jsSeparadorModificarMarca)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpModificarMarcaLayout.createSequentialGroup()
+                .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jpModificarMarcaLayout.createSequentialGroup()
-                        .addComponent(jlNombreActualModificar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcbMarcasModificar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(6, 6, 6)
+                        .addComponent(jsSeparadorModificarMarca))
+                    .addComponent(jlTituloModificarMarca, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jpModificarMarcaLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jbModificarMarca))
                     .addGroup(jpModificarMarcaLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jlNuevoNombreModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfNuevoNombreModificar))
-                    .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpModificarMarcaLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jbModificarMarca)))
+                        .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jpModificarMarcaLayout.createSequentialGroup()
+                                .addComponent(jlNombreMarcaActualModificar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jcbMarcasModificar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpModificarMarcaLayout.createSequentialGroup()
+                                .addComponent(jlNuevoNombreMarcaModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jtfNuevoNombreMarcaModificar)))))
                 .addContainerGap())
         );
         jpModificarMarcaLayout.setVerticalGroup(
@@ -658,17 +739,17 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jlTituloModificarMarca)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jsSeparadorModificarMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jsSeparadorModificarMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jlNombreActualModificar)
+                    .addComponent(jlNombreMarcaActualModificar)
                     .addComponent(jcbMarcasModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(11, 11, 11)
-                .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jtfNuevoNombreModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jlNuevoNombreModificar))
+                    .addComponent(jtfNuevoNombreMarcaModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlNuevoNombreMarcaModificar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbModificarMarca)
                 .addContainerGap())
@@ -679,15 +760,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlTituloEliminarMarca.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jlTituloEliminarMarca.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlTituloEliminarMarca.setText("ELIMINAR MARCA");
-
-        jlIdMarcaEliminar.setText("Nombre de la marca a eliminar:");
-
-        jbEliminarMarca.setText("Eliminar marca");
-        jbEliminarMarca.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbEliminarMarcaActionPerformed(evt);
-            }
-        });
 
         jtTablaEliminarMarca.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -702,6 +774,15 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         ));
         jspTablaEliminarMarca.setViewportView(jtTablaEliminarMarca);
 
+        jlNombreMarcaEliminar.setText("Nombre de la marca a eliminar:");
+
+        jbEliminarMarca.setText("Eliminar marca");
+        jbEliminarMarca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbEliminarMarcaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpEliminarMarcaLayout = new javax.swing.GroupLayout(jpEliminarMarca);
         jpEliminarMarca.setLayout(jpEliminarMarcaLayout);
         jpEliminarMarcaLayout.setHorizontalGroup(
@@ -709,13 +790,13 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             .addGroup(jpEliminarMarcaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
+                    .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
                     .addComponent(jlTituloEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jsSeparadorEliminarMarca)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarMarcaLayout.createSequentialGroup()
-                        .addComponent(jlIdMarcaEliminar)
+                        .addComponent(jlNombreMarcaEliminar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfIdMarcaEliminar))
+                        .addComponent(jtfNombreMarcaEliminar))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarMarcaLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jbEliminarMarca)))
@@ -729,11 +810,11 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorEliminarMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jlIdMarcaEliminar)
-                    .addComponent(jtfIdMarcaEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jlNombreMarcaEliminar)
+                    .addComponent(jtfNombreMarcaEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbEliminarMarca)
                 .addContainerGap())
@@ -749,7 +830,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         );
         jpMarcasLayout.setVerticalGroup(
             jpMarcasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jtpSeccionesMarcas, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+            .addComponent(jtpSeccionesMarcas)
         );
 
         jtpVentanasModulos.addTab("Marcas", jpMarcas);
@@ -773,6 +854,22 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jlNombreNuevoModelo.setText("Nombre del nuevo modelo:");
 
+        jlMarcaNuevoModelo.setText("Marca del nuevo modelo:");
+
+        jcbMarcaNuevoModelo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una marca..." }));
+
+        jlConsumoNuevoModelo.setText("Consumo del nuevo modelo:");
+
+        jlUnidadesConsumoNuevoModelo.setText("L/100km");
+
+        jlEmisionesNuevoModelo.setText("Emisiones del nuevo modelo:");
+
+        jlUnidadesEmisionesNuevoModelo.setText("gCO2/km");
+
+        jlEficienciaNuevoModelo.setText("Eficiencia del nuevo modelo:");
+
+        jcbEficienciaNuevoModelo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una eficiencia..." }));
+
         jbCrearModelo.setText("Crear modelo");
 
         javax.swing.GroupLayout jpCrearModeloLayout = new javax.swing.GroupLayout(jpCrearModelo);
@@ -785,13 +882,34 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     .addComponent(jlTituloCrearModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jsSeparadorCrearModelo)
                     .addComponent(jspTablaCrearModelo)
+                    .addGroup(jpCrearModeloLayout.createSequentialGroup()
+                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jlConsumoNuevoModelo)
+                            .addComponent(jlEmisionesNuevoModelo)
+                            .addComponent(jlMarcaNuevoModelo))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jpCrearModeloLayout.createSequentialGroup()
+                                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jtfEmisionesNuevoModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                                    .addComponent(jtfConsumoNuevoModelo))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jlUnidadesConsumoNuevoModelo)
+                                    .addComponent(jlUnidadesEmisionesNuevoModelo, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(jcbMarcaNuevoModelo, 0, 432, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearModeloLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jbCrearModelo))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearModeloLayout.createSequentialGroup()
-                        .addComponent(jlNombreNuevoModelo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jtfNombreNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearModeloLayout.createSequentialGroup()
+                                .addComponent(jlEficienciaNuevoModelo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jcbEficienciaNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jbCrearModelo, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jpCrearModeloLayout.createSequentialGroup()
+                                .addComponent(jlNombreNuevoModelo)
+                                .addGap(22, 22, 22)
+                                .addComponent(jtfNombreNuevoModelo)))))
                 .addContainerGap())
         );
         jpCrearModeloLayout.setVerticalGroup(
@@ -802,14 +920,32 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorCrearModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaCrearModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addComponent(jspTablaCrearModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfNombreNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlNombreNuevoModelo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jlMarcaNuevoModelo)
+                    .addComponent(jcbMarcaNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jtfConsumoNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlConsumoNuevoModelo)
+                    .addComponent(jlUnidadesConsumoNuevoModelo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jtfEmisionesNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlEmisionesNuevoModelo)
+                    .addComponent(jlUnidadesEmisionesNuevoModelo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jcbEficienciaNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlEficienciaNuevoModelo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbCrearModelo)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jtpSeccionesModelos.addTab("Crear modelo", jpCrearModelo);
@@ -818,6 +954,27 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlTituloModificarModelo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jlTituloModificarModelo.setText("MODIFICAR MODELO");
 
+        jlNombreModeloActualModificar.setText("Seleccione el modelo a modificar:");
+
+        jcbModelosModificar.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione un modelo..." }));
+
+        jtTablaModificarModelo.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jspTablaModificarModelo.setViewportView(jtTablaModificarModelo);
+
+        jlNuevoNombreModeloModificar.setText("Nuevo nombre del modelo:");
+
+        jbModificarModelo.setText("Modificar modelo");
+
         javax.swing.GroupLayout jpModificarModeloLayout = new javax.swing.GroupLayout(jpModificarModelo);
         jpModificarModelo.setLayout(jpModificarModeloLayout);
         jpModificarModeloLayout.setHorizontalGroup(
@@ -825,8 +982,23 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             .addGroup(jpModificarModeloLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jlTituloModificarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 584, Short.MAX_VALUE)
-                    .addComponent(jsSeparadorModificarModelo))
+                    .addComponent(jspTablaModificarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
+                    .addComponent(jlTituloModificarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jsSeparadorModificarModelo)
+                    .addGroup(jpModificarModeloLayout.createSequentialGroup()
+                        .addComponent(jlNombreModeloActualModificar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jcbModelosModificar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpModificarModeloLayout.createSequentialGroup()
+                        .addComponent(jlNuevoNombreModeloModificar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpModificarModeloLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jbModificarModelo))
+                            .addGroup(jpModificarModeloLayout.createSequentialGroup()
+                                .addComponent(jtfNuevoNombreModeloModificar)
+                                .addGap(4, 4, 4)))))
                 .addContainerGap())
         );
         jpModificarModeloLayout.setVerticalGroup(
@@ -836,20 +1008,79 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addComponent(jlTituloModificarModelo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorModificarModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(420, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jcbModelosModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlNombreModeloActualModificar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspTablaModificarModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jtfNuevoNombreModeloModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlNuevoNombreModeloModificar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbModificarModelo)
+                .addContainerGap())
         );
 
         jtpSeccionesModelos.addTab("Modificar modelo", jpModificarModelo);
+
+        jlTituloEliminarModelo.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jlTituloEliminarModelo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlTituloEliminarModelo.setText("ELIMINAR MODELO");
+
+        jtTablaEliminarModelo.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jspTablaEliminarModelo.setViewportView(jtTablaEliminarModelo);
+
+        jlNombreModeloEliminar.setText("Nombre del modelo a eliminar:");
+
+        jbEliminarModelo.setText("Eliminar modelo");
 
         javax.swing.GroupLayout jpEliminarModeloLayout = new javax.swing.GroupLayout(jpEliminarModelo);
         jpEliminarModelo.setLayout(jpEliminarModeloLayout);
         jpEliminarModeloLayout.setHorizontalGroup(
             jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 596, Short.MAX_VALUE)
+            .addGroup(jpEliminarModeloLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jspTablaEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
+                    .addComponent(jlTituloEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jsSeparadorEliminarModelo)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarModeloLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jbEliminarModelo))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarModeloLayout.createSequentialGroup()
+                        .addComponent(jlNombreModeloEliminar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtfNombreModeloEliminar)))
+                .addContainerGap())
         );
         jpEliminarModeloLayout.setVerticalGroup(
             jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 458, Short.MAX_VALUE)
+            .addGroup(jpEliminarModeloLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jlTituloEliminarModelo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jsSeparadorEliminarModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspTablaEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jtfNombreModeloEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlNombreModeloEliminar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbEliminarModelo)
+                .addContainerGap())
         );
 
         jtpSeccionesModelos.addTab("Eliminar modelo", jpEliminarModelo);
@@ -858,7 +1089,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jpModelos.setLayout(jpModelosLayout);
         jpModelosLayout.setHorizontalGroup(
             jpModelosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jtpSeccionesModelos)
+            .addComponent(jtpSeccionesModelos, javax.swing.GroupLayout.PREFERRED_SIZE, 612, Short.MAX_VALUE)
         );
         jpModelosLayout.setVerticalGroup(
             jpModelosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -970,18 +1201,33 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private javax.swing.JButton jbCrearMarca;
     private javax.swing.JButton jbCrearModelo;
     private javax.swing.JButton jbEliminarMarca;
+    private javax.swing.JButton jbEliminarModelo;
     private javax.swing.JButton jbModificarMarca;
+    private javax.swing.JButton jbModificarModelo;
+    private javax.swing.JComboBox<String> jcbEficienciaNuevoModelo;
+    private javax.swing.JComboBox<String> jcbMarcaNuevoModelo;
     private javax.swing.JComboBox<String> jcbMarcasModificar;
-    private javax.swing.JLabel jlIdMarcaEliminar;
-    private javax.swing.JLabel jlNombreActualModificar;
+    private javax.swing.JComboBox<String> jcbModelosModificar;
+    private javax.swing.JLabel jlConsumoNuevoModelo;
+    private javax.swing.JLabel jlEficienciaNuevoModelo;
+    private javax.swing.JLabel jlEmisionesNuevoModelo;
+    private javax.swing.JLabel jlMarcaNuevoModelo;
+    private javax.swing.JLabel jlNombreMarcaActualModificar;
+    private javax.swing.JLabel jlNombreMarcaEliminar;
+    private javax.swing.JLabel jlNombreModeloActualModificar;
+    private javax.swing.JLabel jlNombreModeloEliminar;
     private javax.swing.JLabel jlNombreNuevaMarca;
     private javax.swing.JLabel jlNombreNuevoModelo;
-    private javax.swing.JLabel jlNuevoNombreModificar;
+    private javax.swing.JLabel jlNuevoNombreMarcaModificar;
+    private javax.swing.JLabel jlNuevoNombreModeloModificar;
     private javax.swing.JLabel jlTituloCrearMarca;
     private javax.swing.JLabel jlTituloCrearModelo;
     private javax.swing.JLabel jlTituloEliminarMarca;
+    private javax.swing.JLabel jlTituloEliminarModelo;
     private javax.swing.JLabel jlTituloModificarMarca;
     private javax.swing.JLabel jlTituloModificarModelo;
+    private javax.swing.JLabel jlUnidadesConsumoNuevoModelo;
+    private javax.swing.JLabel jlUnidadesEmisionesNuevoModelo;
     private javax.swing.JMenu jmInfo;
     private javax.swing.JMenu jmModulos;
     private javax.swing.JMenuBar jmbBarraMenu;
@@ -997,20 +1243,29 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private javax.swing.JSeparator jsSeparadorCrearMarca;
     private javax.swing.JSeparator jsSeparadorCrearModelo;
     private javax.swing.JSeparator jsSeparadorEliminarMarca;
+    private javax.swing.JSeparator jsSeparadorEliminarModelo;
     private javax.swing.JSeparator jsSeparadorModificarMarca;
     private javax.swing.JSeparator jsSeparadorModificarModelo;
     private javax.swing.JScrollPane jspTablaCrearMarca;
     private javax.swing.JScrollPane jspTablaCrearModelo;
     private javax.swing.JScrollPane jspTablaEliminarMarca;
+    private javax.swing.JScrollPane jspTablaEliminarModelo;
     private javax.swing.JScrollPane jspTablaModificarMarca;
+    private javax.swing.JScrollPane jspTablaModificarModelo;
     private javax.swing.JTable jtTablaCrearMarca;
     private javax.swing.JTable jtTablaCrearModelo;
     private javax.swing.JTable jtTablaEliminarMarca;
+    private javax.swing.JTable jtTablaEliminarModelo;
     private javax.swing.JTable jtTablaModificarMarca;
-    private javax.swing.JTextField jtfIdMarcaEliminar;
+    private javax.swing.JTable jtTablaModificarModelo;
+    private javax.swing.JTextField jtfConsumoNuevoModelo;
+    private javax.swing.JTextField jtfEmisionesNuevoModelo;
+    private javax.swing.JTextField jtfNombreMarcaEliminar;
+    private javax.swing.JTextField jtfNombreModeloEliminar;
     private javax.swing.JTextField jtfNombreNuevaMarca;
     private javax.swing.JTextField jtfNombreNuevoModelo;
-    private javax.swing.JTextField jtfNuevoNombreModificar;
+    private javax.swing.JTextField jtfNuevoNombreMarcaModificar;
+    private javax.swing.JTextField jtfNuevoNombreModeloModificar;
     private javax.swing.JTabbedPane jtpSeccionesMarcas;
     private javax.swing.JTabbedPane jtpSeccionesModelos;
     private javax.swing.JTabbedPane jtpVentanasModulos;

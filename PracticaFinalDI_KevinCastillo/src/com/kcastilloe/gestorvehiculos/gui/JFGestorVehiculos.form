@@ -84,7 +84,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jtpSeccionesMarcas" alignment="0" pref="484" max="32767" attributes="0"/>
+                  <Component id="jtpSeccionesMarcas" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -108,7 +108,7 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jspTablaCrearMarca" pref="584" max="32767" attributes="0"/>
+                                  <Component id="jspTablaCrearMarca" pref="598" max="32767" attributes="0"/>
                                   <Component id="jsSeparadorCrearMarca" max="32767" attributes="0"/>
                                   <Component id="jlTituloCrearMarca" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
@@ -133,7 +133,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jsSeparadorCrearMarca" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jspTablaCrearMarca" pref="340" max="32767" attributes="0"/>
+                              <Component id="jspTablaCrearMarca" pref="385" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jlNombreNuevaMarca" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -158,21 +158,6 @@
                     </Component>
                     <Component class="javax.swing.JSeparator" name="jsSeparadorCrearMarca">
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jlNombreNuevaMarca">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Nombre de la nueva marca:"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JTextField" name="jtfNombreNuevaMarca">
-                    </Component>
-                    <Component class="javax.swing.JButton" name="jbCrearMarca">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Crear nueva marca"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbCrearMarcaActionPerformed"/>
-                      </Events>
-                    </Component>
                     <Container class="javax.swing.JScrollPane" name="jspTablaCrearMarca">
                       <AuxValues>
                         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -195,6 +180,21 @@
                         </Component>
                       </SubComponents>
                     </Container>
+                    <Component class="javax.swing.JLabel" name="jlNombreNuevaMarca">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Nombre de la nueva marca:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jtfNombreNuevaMarca">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jbCrearMarca">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Crear nueva marca"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbCrearMarcaActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="jpModificarMarca">
@@ -209,25 +209,32 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jlTituloModificarMarca" max="32767" attributes="0"/>
-                                  <Component id="jsSeparadorModificarMarca" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jlNombreActualModificar" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jcbMarcasModificar" max="32767" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                                      <Component id="jsSeparadorModificarMarca" max="32767" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jlNuevoNombreModificar" min="-2" pref="161" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jtfNuevoNombreModificar" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Component id="jspTablaModificarMarca" alignment="1" pref="590" max="32767" attributes="0"/>
+                                  <Component id="jlTituloModificarMarca" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       <Component id="jbModificarMarca" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="jlNombreMarcaActualModificar" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="jcbMarcasModificar" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Component id="jspTablaModificarMarca" pref="598" max="32767" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="jlNuevoNombreMarcaModificar" min="-2" pref="161" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="jtfNuevoNombreMarcaModificar" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -240,18 +247,18 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jlTituloModificarMarca" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jsSeparadorModificarMarca" min="-2" max="-2" attributes="0"/>
+                              <Component id="jsSeparadorModificarMarca" min="-2" pref="2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jlNombreActualModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlNombreMarcaActualModificar" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jcbMarcasModificar" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                              <Component id="jspTablaModificarMarca" pref="303" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jspTablaModificarMarca" pref="353" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jtfNuevoNombreModificar" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jlNuevoNombreModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jtfNuevoNombreMarcaModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlNuevoNombreMarcaModificar" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jbModificarMarca" min="-2" max="-2" attributes="0"/>
@@ -272,7 +279,7 @@
                     </Component>
                     <Component class="javax.swing.JSeparator" name="jsSeparadorModificarMarca">
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jlNombreActualModificar">
+                    <Component class="javax.swing.JLabel" name="jlNombreMarcaActualModificar">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Seleccione la marca a modificar:"/>
                       </Properties>
@@ -291,21 +298,6 @@
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
                       </AuxValues>
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="jlNuevoNombreModificar">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Nuevo nombre de la marca:"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JTextField" name="jtfNuevoNombreModificar">
-                    </Component>
-                    <Component class="javax.swing.JButton" name="jbModificarMarca">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Modificar marca"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbModificarMarcaActionPerformed"/>
-                      </Events>
                     </Component>
                     <Container class="javax.swing.JScrollPane" name="jspTablaModificarMarca">
                       <AuxValues>
@@ -329,6 +321,21 @@
                         </Component>
                       </SubComponents>
                     </Container>
+                    <Component class="javax.swing.JLabel" name="jlNuevoNombreMarcaModificar">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Nuevo nombre de la marca:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jtfNuevoNombreMarcaModificar">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jbModificarMarca">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Modificar marca"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbModificarMarcaActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="jpEliminarMarca">
@@ -346,13 +353,13 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jspTablaEliminarMarca" pref="584" max="32767" attributes="0"/>
+                                  <Component id="jspTablaEliminarMarca" pref="598" max="32767" attributes="0"/>
                                   <Component id="jlTituloEliminarMarca" max="32767" attributes="0"/>
                                   <Component id="jsSeparadorEliminarMarca" max="32767" attributes="0"/>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jlIdMarcaEliminar" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jlNombreMarcaEliminar" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jtfIdMarcaEliminar" max="32767" attributes="0"/>
+                                      <Component id="jtfNombreMarcaEliminar" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -371,11 +378,11 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jsSeparadorEliminarMarca" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jspTablaEliminarMarca" pref="340" max="32767" attributes="0"/>
+                              <Component id="jspTablaEliminarMarca" pref="385" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jlIdMarcaEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jtfIdMarcaEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlNombreMarcaEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jtfNombreMarcaEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jbEliminarMarca" min="-2" max="-2" attributes="0"/>
@@ -395,21 +402,6 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JSeparator" name="jsSeparadorEliminarMarca">
-                    </Component>
-                    <Component class="javax.swing.JLabel" name="jlIdMarcaEliminar">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Nombre de la marca a eliminar:"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JTextField" name="jtfIdMarcaEliminar">
-                    </Component>
-                    <Component class="javax.swing.JButton" name="jbEliminarMarca">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Eliminar marca"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbEliminarMarcaActionPerformed"/>
-                      </Events>
                     </Component>
                     <Container class="javax.swing.JScrollPane" name="jspTablaEliminarMarca">
                       <AuxValues>
@@ -433,6 +425,21 @@
                         </Component>
                       </SubComponents>
                     </Container>
+                    <Component class="javax.swing.JLabel" name="jlNombreMarcaEliminar">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Nombre de la marca a eliminar:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jtfNombreMarcaEliminar">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jbEliminarMarca">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Eliminar marca"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbEliminarMarcaActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
               </SubComponents>
@@ -451,7 +458,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jtpSeccionesModelos" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jtpSeccionesModelos" alignment="0" pref="612" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -483,14 +490,43 @@
                                   <Component id="jlTituloCrearModelo" max="32767" attributes="0"/>
                                   <Component id="jsSeparadorCrearModelo" max="32767" attributes="0"/>
                                   <Component id="jspTablaCrearModelo" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                      <Component id="jbCrearModelo" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jlConsumoNuevoModelo" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jlEmisionesNuevoModelo" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jlMarcaNuevoModelo" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Component id="jtfEmisionesNuevoModelo" pref="374" max="32767" attributes="0"/>
+                                                  <Component id="jtfConsumoNuevoModelo" max="32767" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="jlUnidadesConsumoNuevoModelo" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jlUnidadesEmisionesNuevoModelo" alignment="1" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <Component id="jcbMarcaNuevoModelo" pref="432" max="32767" attributes="0"/>
+                                      </Group>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jlNombreNuevoModelo" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
-                                      <Component id="jtfNombreNuevoModelo" min="-2" pref="428" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="jlEficienciaNuevoModelo" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="jcbEficienciaNuevoModelo" min="-2" pref="432" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="jbCrearModelo" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="jlNombreNuevoModelo" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                                              <Component id="jtfNombreNuevoModelo" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -505,15 +541,37 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jsSeparadorCrearModelo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jspTablaCrearModelo" pref="340" max="32767" attributes="0"/>
+                              <Component id="jspTablaCrearModelo" min="-2" pref="219" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jtfNombreNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jlNombreNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jbCrearModelo" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jlMarcaNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jcbMarcaNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jtfConsumoNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlConsumoNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlUnidadesConsumoNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jtfEmisionesNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlEmisionesNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlUnidadesEmisionesNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jcbEficienciaNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlEficienciaNuevoModelo" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jbCrearModelo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -559,6 +617,64 @@
                     </Component>
                     <Component class="javax.swing.JTextField" name="jtfNombreNuevoModelo">
                     </Component>
+                    <Component class="javax.swing.JLabel" name="jlMarcaNuevoModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Marca del nuevo modelo:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JComboBox" name="jcbMarcaNuevoModelo">
+                      <Properties>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="1">
+                            <StringItem index="0" value="Seleccione una marca..."/>
+                          </StringArray>
+                        </Property>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                      </AuxValues>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jlConsumoNuevoModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Consumo del nuevo modelo:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jtfConsumoNuevoModelo">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jlUnidadesConsumoNuevoModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="L/100km"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jlEmisionesNuevoModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Emisiones del nuevo modelo:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jtfEmisionesNuevoModelo">
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jlUnidadesEmisionesNuevoModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="gCO2/km"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jlEficienciaNuevoModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Eficiencia del nuevo modelo:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JComboBox" name="jcbEficienciaNuevoModelo">
+                      <Properties>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="1">
+                            <StringItem index="0" value="Seleccione una eficiencia..."/>
+                          </StringArray>
+                        </Property>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                      </AuxValues>
+                    </Component>
                     <Component class="javax.swing.JButton" name="jbCrearModelo">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Crear modelo"/>
@@ -581,8 +697,28 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jlTituloModificarModelo" pref="584" max="32767" attributes="0"/>
+                                  <Component id="jspTablaModificarModelo" pref="598" max="32767" attributes="0"/>
+                                  <Component id="jlTituloModificarModelo" max="32767" attributes="0"/>
                                   <Component id="jsSeparadorModificarModelo" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jlNombreModeloActualModificar" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jcbModelosModificar" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="jlNuevoNombreModeloModificar" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                              <Component id="jbModificarModelo" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" attributes="0">
+                                              <Component id="jtfNuevoNombreModeloModificar" max="32767" attributes="0"/>
+                                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                  </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -595,7 +731,21 @@
                               <Component id="jlTituloModificarModelo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jsSeparadorModificarModelo" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="420" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jcbModelosModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlNombreModeloActualModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jspTablaModificarModelo" min="-2" pref="353" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jtfNuevoNombreModeloModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlNuevoNombreModeloModificar" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jbModificarModelo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -612,6 +762,57 @@
                     </Component>
                     <Component class="javax.swing.JSeparator" name="jsSeparadorModificarModelo">
                     </Component>
+                    <Component class="javax.swing.JLabel" name="jlNombreModeloActualModificar">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Seleccione el modelo a modificar:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JComboBox" name="jcbModelosModificar">
+                      <Properties>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="1">
+                            <StringItem index="0" value="Seleccione un modelo..."/>
+                          </StringArray>
+                        </Property>
+                      </Properties>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                      </AuxValues>
+                    </Component>
+                    <Container class="javax.swing.JScrollPane" name="jspTablaModificarModelo">
+                      <AuxValues>
+                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                      </AuxValues>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTable" name="jtTablaModificarModelo">
+                          <Properties>
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="0" rowCount="4"/>
+                            </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="0"/>
+                            </Property>
+                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                            </Property>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Component class="javax.swing.JLabel" name="jlNuevoNombreModeloModificar">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Nuevo nombre del modelo:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jtfNuevoNombreModeloModificar">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jbModificarModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Modificar modelo"/>
+                      </Properties>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="jpEliminarModelo">
@@ -626,15 +827,94 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="596" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jspTablaEliminarModelo" pref="598" max="32767" attributes="0"/>
+                                  <Component id="jlTituloEliminarModelo" max="32767" attributes="0"/>
+                                  <Component id="jsSeparadorEliminarModelo" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                      <Component id="jbEliminarModelo" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="jlNombreModeloEliminar" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jtfNombreModeloEliminar" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="458" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jlTituloEliminarModelo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jsSeparadorEliminarModelo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jspTablaEliminarModelo" pref="24" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jtfNombreModeloEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jlNombreModeloEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jbEliminarModelo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
                       </Group>
                     </DimensionLayout>
                   </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jlTituloEliminarModelo">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Dialog" size="18" style="1"/>
+                        </Property>
+                        <Property name="horizontalAlignment" type="int" value="0"/>
+                        <Property name="text" type="java.lang.String" value="ELIMINAR MODELO"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JSeparator" name="jsSeparadorEliminarModelo">
+                    </Component>
+                    <Container class="javax.swing.JScrollPane" name="jspTablaEliminarModelo">
+                      <AuxValues>
+                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                      </AuxValues>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTable" name="jtTablaEliminarModelo">
+                          <Properties>
+                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                              <Table columnCount="0" rowCount="4"/>
+                            </Property>
+                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                              <TableColumnModel selectionModel="0"/>
+                            </Property>
+                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                            </Property>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Component class="javax.swing.JLabel" name="jlNombreModeloEliminar">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Nombre del modelo a eliminar:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jtfNombreModeloEliminar">
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jbEliminarModelo">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Eliminar modelo"/>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
                 </Container>
               </SubComponents>
             </Container>
