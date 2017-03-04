@@ -1,6 +1,7 @@
 package com.kcastilloe.gestorvehiculos.persistencia;
 
 import com.kcastilloe.gestorvehiculos.gui.JFGestorVehiculos;
+import com.kcastilloe.gestorvehiculos.modelo.Eficiencia;
 import com.kcastilloe.gestorvehiculos.modelo.Marca;
 import com.kcastilloe.gestorvehiculos.modelo.Modelo;
 import java.io.PrintWriter;
@@ -24,6 +25,7 @@ public class GestorBBDD {
     private String password = "dam2015";
     Marca miMarca;
     Modelo miModelo;
+    Eficiencia miEficiencia;
     JFGestorVehiculos jfp;
     
     private Connection conexion = null; /* La conexión a establecer. */
@@ -422,14 +424,14 @@ public class GestorBBDD {
             this.abrirConexion();
         }
         try {
-            /* NOTA: EL ID_MODELO HAY QUE PASARLO COMO PARÁMETRO EN LUGAR DE HARDCODE. RECOGERLO CON UN OBJETO MODELO DESDE LA INTERFAZ. */
-            sql = "update modelos set nombre_modelo = ?, id_marca = ?, id_eficiencia = ?, consumo_modelo = ?, emisiones_modelo = ? where id_modelo = 6";
+            sql = "update modelos set nombre_modelo = ?, id_marca = ?, id_eficiencia = ?, consumo_modelo = ?, emisiones_modelo = ? where id_modelo = ?";
             ps = conexion.prepareStatement(sql);
             ps.setString(1, modeloModificado.getNombre_modelo());
             ps.setInt(2, modeloModificado.getId_marca());
             ps.setInt(3, modeloModificado.getId_eficiencia());
             ps.setFloat(4, modeloModificado.getConsumo_modelo());
             ps.setFloat(5, modeloModificado.getEmisiones_modelo());
+            ps.setInt(6, modeloModificado.getId_modelo());
             ps.executeUpdate();
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
@@ -483,9 +485,34 @@ public class GestorBBDD {
     
     /* Métodos relacionados con la tabla Eficiencias. */
     
+    public ArrayList buscarEficiencias() throws SQLException, Exception{
+        int id_eficiencia = 0;
+        String nombre_eficiencia = null;
+        ArrayList<Eficiencia> alEficiencias = new ArrayList();
+        
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from eficiencias order by id_eficiencia";
+            ps = conexion.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                id_eficiencia = rs.getInt("id_eficiencia");
+                nombre_eficiencia = rs.getString("nombre_eficiencia");
+                miEficiencia = new Eficiencia(id_eficiencia, nombre_eficiencia);
+                alEficiencias.add(miEficiencia);
+            }
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+        return alEficiencias;
+    }
+    
     /**
      * Método usado para recuperar el nombre de una eficiencia según su id.
-     * @param idBusqueda El id de la eficiencia de la que se desea conocer el nombre
+     * @param idBusqueda El id de la eficiencia de la que se desea conocer el nombre.
      * @return El nombre de la eficiencia correspondiente.
      * @throws SQLException
      * @throws Exception 
@@ -502,9 +529,36 @@ public class GestorBBDD {
             ps.setInt(1, idBusqueda);
             rs = ps.executeQuery();
             if (rs.next()) {
-                nombreBusqueda = rs.getString("nombre_marca");
+                nombreBusqueda = rs.getString("nombre_eficiencia");
             }
             return nombreBusqueda;
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+    }
+    
+    /**
+     * Método usado para recuperar el id de una eficiencia según su nombre.
+     * @param nombreBusqueda El nombre de la eficiencia de la que se desea conocer el id.
+     * @return El id de la eficiencia correspondiente.
+     * @throws SQLException
+     * @throws Exception 
+     */
+    public int buscarEficienciasPorNombre(String nombreBusqueda) throws SQLException, Exception{
+        int idBusqueda = 0;
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            sql = "select * from eficiencias where nombre_eficiencia = ?";
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, nombreBusqueda);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                idBusqueda = rs.getInt("id_eficiencia");
+            }
+            return idBusqueda;
         } catch (SQLException sqlex) {
             throw new SQLException("Imposible conectar a la base de datos.");
         }
