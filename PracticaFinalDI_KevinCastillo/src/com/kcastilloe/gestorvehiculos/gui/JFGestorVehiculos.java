@@ -26,10 +26,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     Modelo miModelo;
     ArrayList<Modelo> alModelos = new ArrayList();
     GestorBBDD ges = new GestorBBDD(this);
-    
-    private boolean focoCrearMarca = false;
-    private boolean focoModificarMarca = false;
-    private boolean focoEliminarMarca = false;
 
     /* Los Vectores servirán de estructura para las tablas: */
     private Vector vMarcas = new Vector();
@@ -49,21 +45,24 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         vMarcas.clear();
         vMarcas.add("ID marca");
         vMarcas.add("Nombre marca");
+        jtTablaCrearMarca.setModel(dtmCrearMarcas);
+        jtTablaModificarMarca.setModel(dtmModificarMarcas);
+        jtTablaEliminarMarca.setModel(dtmEliminarMarcas);
         /* Se añade un Listener para analizar cuándo se recibe algún cambio de ventana en el TabbedPane general. */
-        jtpVentanasModulos.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (e.getSource() instanceof JTabbedPane) {
-                    /* Métodos de reseteo de ventanas. */
-                    reiniciarCamposCrearMarca();
-                    reiniciarCamposModificarMarca();
-                    reiniciarCamposEliminarMarca();
-                    reiniciarCamposCrearModelo();
-                    reiniciarCamposModificarModelo();
-                    reiniciarCamposEliminarModelo();
-                }
-            }
-        });
+//        jtpVentanasModulos.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//                if (e.getSource() instanceof JTabbedPane) {
+//                    /* Métodos de reseteo de ventanas. */
+//                    reiniciarCamposCrearMarca();
+//                    reiniciarCamposModificarMarca();
+//                    reiniciarCamposEliminarMarca();
+//                    reiniciarCamposCrearModelo();
+//                    reiniciarCamposModificarModelo();
+//                    reiniciarCamposEliminarModelo();
+//                }
+//            }
+//        });
         /* Se añade un Listener para analizar cuándo se recibe algún cambio de ventana en el TabbedPane de Marcas. */
         jtpSeccionesMarcas.addChangeListener(new ChangeListener() {
             @Override
@@ -73,9 +72,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     reiniciarCamposCrearMarca();
                     reiniciarCamposModificarMarca();
                     reiniciarCamposEliminarMarca();
-                    reiniciarCamposCrearModelo();
-                    reiniciarCamposModificarModelo();
-                    reiniciarCamposEliminarModelo();
                 }
             }
         });
@@ -85,9 +81,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             public void stateChanged(ChangeEvent e) {
                 if (e.getSource() instanceof JTabbedPane) {
                     /* Métodos de reseteo de ventanas. */
-                    reiniciarCamposCrearMarca();
-                    reiniciarCamposModificarMarca();
-                    reiniciarCamposEliminarMarca();
                     reiniciarCamposCrearModelo();
                     reiniciarCamposModificarModelo();
                     reiniciarCamposEliminarModelo();
@@ -118,28 +111,31 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     "Información",
                     JOptionPane.INFORMATION_MESSAGE);
             jtpVentanasModulos.setVisible(true);
+            reiniciarCamposCrearMarca();
+            reiniciarCamposModificarMarca();
+            reiniciarCamposEliminarMarca();
+            reiniciarCamposCrearModelo();
+            reiniciarCamposModificarModelo();
+            reiniciarCamposEliminarModelo();
             cargarMarcasModificables();
         } catch (SQLException sqlex) {
             JOptionPane.showMessageDialog(
                     null,
-                    sqlex.getMessage() + "\nForzando cierre del programa.",
+                    sqlex.getMessage() + "\nPruebe de nuevo.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
         } catch (ClassNotFoundException cnfex) {
             JOptionPane.showMessageDialog(
                     null,
-                    cnfex.getMessage() + "\nForzando cierre del programa.",
+                    cnfex.getMessage() + "\nPruebe de nuevo.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(
                     null,
-                    ex.getMessage() + "\nForzando cierre del programa.",
+                    ex.getMessage() + "\nPruebe de nuevo.",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
         }
     }
 
@@ -170,16 +166,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     }
 
     private void limpiarTablas() {
-        /* Las tablas de Marcas tendrán 2 campos: */
-
- /* Se asigna el modelo a las tablas de Marcas: */
-        jtTablaCrearMarca.setModel(dtmCrearMarcas);
+        /* Se resetean las filas de las tablas: */
         dtmCrearMarcas.setRowCount(0);
-
-        jtTablaModificarMarca.setModel(dtmModificarMarcas);
         dtmModificarMarcas.setRowCount(0);
-
-        jtTablaEliminarMarca.setModel(dtmEliminarMarcas);
         dtmEliminarMarcas.setRowCount(0);
 
     }
@@ -242,50 +231,62 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      */
     private void modificarMarca() {
         boolean yaExiste = false;
-        String nombreModificadoMarca = jtfNuevoNombreModificar.getText().toUpperCase();
-        int idMarcaModificable = 0;
-        if (nombreModificadoMarca.trim().compareToIgnoreCase("") == 0) {
-            reiniciarCamposModificarMarca();
+
+        /* Evalúa la opción seleccionada en el JCombobox. */
+        String marcaSeleccionada = (String) jcbMarcasModificar.getSelectedItem();
+        if (marcaSeleccionada.compareToIgnoreCase("Seleccione una marca...") == 0) {
+            jtfNuevoNombreModificar.setText("");
             JOptionPane.showMessageDialog(
                     null,
-                    "Inserte un nuevo nombre válido para la marca.",
+                    "Seleccione una marca válida en el selector desplegable.",
                     "Información",
                     JOptionPane.INFORMATION_MESSAGE);
         } else {
-            idMarcaModificable = jcbMarcasModificar.getSelectedIndex();
-            try {
-                miMarca = new Marca(idMarcaModificable, nombreModificadoMarca);
-                yaExiste = ges.existeMarca(miMarca);
-                if (!yaExiste) {
-                    ges.modificarMarca(miMarca);
+            String nombreModificadoMarca = jtfNuevoNombreModificar.getText().toUpperCase();
+            int idMarcaModificable = 0;
+            if (nombreModificadoMarca.trim().compareToIgnoreCase("") == 0) {
+                reiniciarCamposModificarMarca();
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Inserte un nuevo nombre válido para la marca.",
+                        "Información",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                idMarcaModificable = jcbMarcasModificar.getSelectedIndex();
+                try {
+                    miMarca = new Marca(idMarcaModificable, nombreModificadoMarca);
+                    yaExiste = ges.existeMarca(miMarca);
+                    if (!yaExiste) {
+                        ges.modificarMarca(miMarca);
+                        reiniciarCamposModificarMarca();
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Marca modificada con éxito.",
+                                "Información",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        reiniciarCamposModificarMarca();
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Ya existe una marca con ese nombre.\nPor favor, introduzca otro nombre.",
+                                "Información",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } catch (SQLException sqlex) {
                     reiniciarCamposModificarMarca();
                     JOptionPane.showMessageDialog(
                             null,
-                            "Marca modificada con éxito.",
-                            "Información",
-                            JOptionPane.INFORMATION_MESSAGE);
-                } else {
+                            sqlex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex) {
                     reiniciarCamposModificarMarca();
                     JOptionPane.showMessageDialog(
                             null,
-                            "Ya existe una marca con ese nombre.\nPor favor, introduzca otro nombre.",
-                            "Información",
-                            JOptionPane.INFORMATION_MESSAGE);
+                            ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (SQLException sqlex) {
-                reiniciarCamposModificarMarca();
-                JOptionPane.showMessageDialog(
-                        null,
-                        sqlex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            } catch (Exception ex) {
-                reiniciarCamposModificarMarca();
-                JOptionPane.showMessageDialog(
-                        null,
-                        ex.getMessage(),
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -387,8 +388,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private void reiniciarCamposModificarMarca() {
         jcbMarcasModificar.setSelectedIndex(0);
         jtfNuevoNombreModificar.setText("");
-        jtfNuevoNombreModificar.setEnabled(false);
-        jbModificarMarca.setEnabled(false);
         alMarcas.clear();
         limpiarTablas();
         try {
@@ -605,10 +604,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jlNuevoNombreModificar.setText("Nuevo nombre de la marca:");
 
-        jtfNuevoNombreModificar.setEnabled(false);
-
         jbModificarMarca.setText("Modificar marca");
-        jbModificarMarca.setEnabled(false);
         jbModificarMarca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbModificarMarcaActionPerformed(evt);
@@ -845,20 +841,20 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     }//GEN-LAST:event_jbCrearMarcaActionPerformed
 
     private void jcbMarcasModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbMarcasModificarActionPerformed
-        String marcaSeleccionada = (String) jcbMarcasModificar.getSelectedItem();
-        if (marcaSeleccionada.compareToIgnoreCase("Seleccione una marca...") == 0) {
-            jtfNuevoNombreModificar.setEnabled(false);
-            jtfNuevoNombreModificar.setText("");
-            jbModificarMarca.setEnabled(false);
-            JOptionPane.showMessageDialog(
-                    null,
-                    "Seleccione una marca válida en el selector desplegable.",
-                    "Información",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            jtfNuevoNombreModificar.setEnabled(true);
-            jbModificarMarca.setEnabled(true);
-        }
+//        String marcaSeleccionada = (String) jcbMarcasModificar.getSelectedItem();
+//        if (marcaSeleccionada.compareToIgnoreCase("Seleccione una marca...") == 0) {
+//            jtfNuevoNombreModificar.setEnabled(false);
+//            jtfNuevoNombreModificar.setText("");
+//            jbModificarMarca.setEnabled(false);
+//            JOptionPane.showMessageDialog(
+//                    null,
+//                    "Seleccione una marca válida en el selector desplegable.",
+//                    "Información",
+//                    JOptionPane.INFORMATION_MESSAGE);
+//        } else {
+//            jtfNuevoNombreModificar.setEnabled(true);
+//            jbModificarMarca.setEnabled(true);
+//        }
     }//GEN-LAST:event_jcbMarcasModificarActionPerformed
 
     private void jbModificarMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbModificarMarcaActionPerformed
