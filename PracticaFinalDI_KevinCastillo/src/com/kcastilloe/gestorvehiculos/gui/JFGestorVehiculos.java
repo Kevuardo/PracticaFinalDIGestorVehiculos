@@ -4,11 +4,15 @@ import com.kcastilloe.gestorvehiculos.modelo.Eficiencia;
 import com.kcastilloe.gestorvehiculos.modelo.Marca;
 import com.kcastilloe.gestorvehiculos.modelo.Modelo;
 import com.kcastilloe.gestorvehiculos.persistencia.GestorBBDD;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -63,6 +67,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jtTablaCrearModelo.setModel(dtmModelos);
         jtTablaModificarModelo.setModel(dtmModelos);
         jtTablaEliminarModelo.setModel(dtmModelos);
+        jtTablaConsultaModelos.setModel(dtmModelos);
 
         /* Se añade un Listener para analizar cuándo se recibe algún cambio de ventana en el TabbedPane general. */
         jtpVentanasModulos.addChangeListener(new ChangeListener() {
@@ -76,6 +81,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     reiniciarCamposCrearModelo();
                     reiniciarCamposModificarModelo();
                     reiniciarCamposEliminarModelo();
+                    reiniciarCamposConsultarModelo();
                 }
             }
         });
@@ -100,6 +106,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     reiniciarCamposCrearModelo();
                     reiniciarCamposModificarModelo();
                     reiniciarCamposEliminarModelo();
+                    reiniciarCamposConsultarModelo();
                 }
             }
         });
@@ -133,6 +140,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             reiniciarCamposCrearModelo();
             reiniciarCamposModificarModelo();
             reiniciarCamposEliminarModelo();
+            reiniciarCamposConsultarModelo();
             cargarMarcasModificables();
             cargarMarcasEficienciasNuevoModelo();
         } catch (SQLException sqlex) {
@@ -181,63 +189,86 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    private void cargarMarcasEficienciasNuevoModelo(){
+    
+    /**
+     * Método encargado de rellenar dinámicamente los JComboBox de Modelo.
+     */
+    private void cargarMarcasEficienciasNuevoModelo() {
         try {
             /* Buscar todos los modelos, marcas y eficiencias. */
             alMarcas = ges.buscarMarcas();
             alModelos = ges.buscarModelos();
             alEficiencias = ges.buscarEficiencias();
-            
+
             /* Combobox de marcas de Crear Modelo.*/
-                /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
-                for (int i = jcbMarcaNuevoModelo.getItemCount() - 1; i > 0; i--) {
-                    jcbMarcaNuevoModelo.removeItemAt(i);
-                }
-                /* Añade los elementos recogidos de la base de datos. */
-                for (int i = 0; i < alMarcas.size(); i++) {
-                    jcbMarcaNuevoModelo.addItem(alMarcas.get(i).getNombre_marca());
-                }
-            
+            /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
+            for (int i = jcbMarcaNuevoModelo.getItemCount() - 1; i > 0; i--) {
+                jcbMarcaNuevoModelo.removeItemAt(i);
+            }
+            /* Añade los elementos recogidos de la base de datos. */
+            for (int i = 0; i < alMarcas.size(); i++) {
+                jcbMarcaNuevoModelo.addItem(alMarcas.get(i).getNombre_marca());
+            }
+
             /* Combobox de eficiencias de Crear Modelo.*/
-                /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
-                for (int i = jcbEficienciaNuevoModelo.getItemCount() - 1; i > 0; i--) {
-                    jcbEficienciaNuevoModelo.removeItemAt(i);
-                }
-                /* Añade los elementos recogidos de la base de datos. */
-                for (int i = 0; i < alEficiencias.size(); i++) {
-                    jcbEficienciaNuevoModelo.addItem(alEficiencias.get(i).getNombre_eficiencia());
-                }
-            
+            /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
+            for (int i = jcbEficienciaNuevoModelo.getItemCount() - 1; i > 0; i--) {
+                jcbEficienciaNuevoModelo.removeItemAt(i);
+            }
+            /* Añade los elementos recogidos de la base de datos. */
+            for (int i = 0; i < alEficiencias.size(); i++) {
+                jcbEficienciaNuevoModelo.addItem(alEficiencias.get(i).getNombre_eficiencia());
+            }
+
             /* Combobox de modelos de Modificar Modelo. */
-                /* Borra los elementos (si los hubiera) que no son "Seleccione un modelo...". */
-                for (int i = jcbModelosModificar.getItemCount() - 1; i > 0; i--) {
-                    jcbModelosModificar.removeItemAt(i);
-                }
-                /* Añade los elementos recogidos de la base de datos. */
-                for (int i = 0; i < alModelos.size(); i++) {
-                    jcbModelosModificar.addItem(alModelos.get(i).getNombre_modelo());
-                }
-            
+            /* Borra los elementos (si los hubiera) que no son "Seleccione un modelo...". */
+            for (int i = jcbModelosModificar.getItemCount() - 1; i > 0; i--) {
+                jcbModelosModificar.removeItemAt(i);
+            }
+            /* Añade los elementos recogidos de la base de datos. */
+            for (int i = 0; i < alModelos.size(); i++) {
+                jcbModelosModificar.addItem(alModelos.get(i).getNombre_modelo());
+            }
+
             /* Combobox de marcas de Modificar Modelo. */
-                /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
-                for (int i = jcbNuevaMarcaModelo.getItemCount() - 1; i > 0; i--) {
-                    jcbNuevaMarcaModelo.removeItemAt(i);
-                }
-                /* Añade los elementos recogidos de la base de datos. */
-                for (int i = 0; i < alMarcas.size(); i++) {
-                    jcbNuevaMarcaModelo.addItem(alMarcas.get(i).getNombre_marca());
-                }
-            
+            /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
+            for (int i = jcbNuevaMarcaModelo.getItemCount() - 1; i > 0; i--) {
+                jcbNuevaMarcaModelo.removeItemAt(i);
+            }
+            /* Añade los elementos recogidos de la base de datos. */
+            for (int i = 0; i < alMarcas.size(); i++) {
+                jcbNuevaMarcaModelo.addItem(alMarcas.get(i).getNombre_marca());
+            }
+
             /* Combobox de eficiencias de Modificar Modelo.*/
-                /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
-                for (int i = jcbNuevaEficienciaModelo.getItemCount() - 1; i > 0; i--) {
-                    jcbNuevaEficienciaModelo.removeItemAt(i);
-                }
-                /* Añade los elementos recogidos de la base de datos. */
-                for (int i = 0; i < alEficiencias.size(); i++) {
-                    jcbNuevaEficienciaModelo.addItem(alEficiencias.get(i).getNombre_eficiencia());
-                }
+            /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
+            for (int i = jcbNuevaEficienciaModelo.getItemCount() - 1; i > 0; i--) {
+                jcbNuevaEficienciaModelo.removeItemAt(i);
+            }
+            /* Añade los elementos recogidos de la base de datos. */
+            for (int i = 0; i < alEficiencias.size(); i++) {
+                jcbNuevaEficienciaModelo.addItem(alEficiencias.get(i).getNombre_eficiencia());
+            }
+            
+            /* Combobox de marcas de Consultar Modelo. */
+            /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
+            for (int i = jcbMarcasConsultaModelos.getItemCount() - 1; i > 0; i--) {
+                jcbMarcasConsultaModelos.removeItemAt(i);
+            }
+            /* Añade los elementos recogidos de la base de datos. */
+            for (int i = 0; i < alMarcas.size(); i++) {
+                jcbMarcasConsultaModelos.addItem(alMarcas.get(i).getNombre_marca());
+            }
+            
+            /* Combobox de eficiencias de Consultar Modelo. */
+            /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
+            for (int i = jcbEficienciasConsultaModelos.getItemCount() - 1; i > 0; i--) {
+                jcbEficienciasConsultaModelos.removeItemAt(i);
+            }
+            /* Añade los elementos recogidos de la base de datos. */
+            for (int i = 0; i < alEficiencias.size(); i++) {
+                jcbEficienciasConsultaModelos.addItem(alEficiencias.get(i).getNombre_eficiencia());
+            }
         } catch (SQLException sqlex) {
             JOptionPane.showMessageDialog(
                     null,
@@ -252,7 +283,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     private void limpiarTablas() {
         /* Se resetean las filas de las tablas: */
         dtmMarcas.setRowCount(0);
@@ -526,10 +557,106 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      * Método usado para llamar a la BD y modificar el modelo que seleccione el
      * usuario con los datos introducidos.
      */
-    private void modificarModelo(){
-            
+    private void modificarModelo() {
+        boolean yaExiste = false;
+
+        /* Evalúa la opción seleccionada en el JCombobox de Modelos. */
+        String modeloSeleccionado = (String) jcbModelosModificar.getSelectedItem();
+        if (modeloSeleccionado.compareToIgnoreCase("Seleccione un modelo...") == 0) {
+            jtfNuevoNombreMarcaModificar.setText("");
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Seleccione un modelo válido en el selector desplegable.",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            String nuevoNombreModelo = jtfNuevoNombreModeloModificar.getText().toUpperCase();
+            if (nuevoNombreModelo.trim().compareToIgnoreCase("") == 0) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Introduzca un nombre válido para el modelo.",
+                        "Información",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                String marcaSeleccionada = (String) jcbNuevaMarcaModelo.getSelectedItem();
+                if (marcaSeleccionada.compareToIgnoreCase("Seleccione una marca...") == 0) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Seleccione una marca válida en el selector desplegable.",
+                            "Información",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    String consumoNuevoModelo = jtfNuevoConsumoModelo.getText();
+                    if (consumoNuevoModelo.trim().compareToIgnoreCase("") == 0) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Introduzca un consumo válido para el modelo.",
+                                "Información",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        String emisionesNuevoModelo = jtfNuevasEmisionesModelo.getText();
+                        if (emisionesNuevoModelo.trim().compareToIgnoreCase("") == 0) {
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    "Introduzca unas emisionas válidas para el modelo.",
+                                    "Información",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            String eficienciaSeleccionada = (String) jcbNuevaEficienciaModelo.getSelectedItem();
+                            if (eficienciaSeleccionada.compareToIgnoreCase("Seleccione una eficiencia...") == 0) {
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Seleccione una eficiencia válida en el selector desplegable.",
+                                        "Información",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                try {
+                                    int idMarca = ges.buscarMarcaPorNombre(marcaSeleccionada);
+                                    int idEficiencia = ges.buscarEficienciasPorNombre(eficienciaSeleccionada);
+                                    float consumoNumerico = Float.parseFloat(consumoNuevoModelo);
+                                    float emisionesNumerico = Float.parseFloat(emisionesNuevoModelo);
+                                    int idModeloModificable = jcbModelosModificar.getSelectedIndex();
+                                    miModelo = new Modelo(idModeloModificable, nuevoNombreModelo, idMarca, idEficiencia, consumoNumerico, emisionesNumerico);
+                                    yaExiste = ges.existeModelo(miModelo);
+                                    if (!yaExiste) {
+                                        ges.modificarModelo(miModelo);
+                                        reiniciarCamposModificarModelo();
+                                        JOptionPane.showMessageDialog(
+                                                null,
+                                                "Modelo modificado con éxito",
+                                                "Información",
+                                                JOptionPane.INFORMATION_MESSAGE);
+                                    } else {
+                                        reiniciarCamposCrearModelo();
+                                        JOptionPane.showMessageDialog(
+                                                null,
+                                                "Ya existe un modelo con ese nombre.\nPor favor, introduzca otro nombre.",
+                                                "Información",
+                                                JOptionPane.INFORMATION_MESSAGE);
+                                    }
+                                } catch (SQLException sqlex) {
+                                    reiniciarCamposCrearMarca();
+                                    JOptionPane.showMessageDialog(
+                                            null,
+                                            sqlex.getMessage(),
+                                            "Error",
+                                            JOptionPane.ERROR_MESSAGE);
+                                } catch (Exception ex) {
+                                    reiniciarCamposCrearMarca();
+                                    JOptionPane.showMessageDialog(
+                                            null,
+                                            ex.getMessage(),
+                                            "Error",
+                                            JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-    
+
     /**
      * Método usado para llamar a la BD y eliminar el modelo que seleccione el
      * usuario con los datos introducidos.
@@ -583,8 +710,56 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
         }
     }
-    
-    
+
+    /**
+     * Método usado para buscar modelos según los parámetros que seleccione el
+     * usuario.
+     */
+    private void consultarModelos() {
+        int idBusqueda = jcbMarcasConsultaModelos.getSelectedIndex();
+        int consumoMaximoSeleccionado = jslSelectorConsumo.getValue();
+        int emisionesMaximasSeleccionadas = jslSelectorEmisiones.getValue();
+        int idEficiencia = jcbEficienciasConsultaModelos.getSelectedIndex();
+        miModelo = new Modelo(idBusqueda, consumoMaximoSeleccionado, emisionesMaximasSeleccionadas, idEficiencia);
+        try {
+            alModelos.clear();
+            limpiarTablas();
+            alModelos = ges.buscarModelosEspecificos(miModelo);
+            if (alModelos.size() == 0) {
+                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
+                ges.resetearAutoincrementalModelo();
+            } else {
+                for (int i = 0; i < alModelos.size(); i++) {
+                    /* Incrementa filas: */
+                    dtmModelos.setRowCount(dtmModelos.getRowCount() + 1);
+                    /* Recupera el nombre de la marca y la eficiencia según sus ID's: */
+                    String nombreMarca = ges.buscarMarcaPorId(alModelos.get(i).getId_marca());
+                    String nombreEficiencia = ges.buscarEficienciasPorId(alModelos.get(i).getId_eficiencia());
+                    jtTablaConsultaModelos.setValueAt(nombreMarca, i, 0);
+                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getNombre_modelo(), i, 1);
+                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getConsumo_modelo(), i, 2);
+                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getEmisiones_modelo(), i, 3);
+                    jtTablaConsultaModelos.setValueAt(nombreEficiencia, i, 4);
+                }
+            }
+            jbExportarModelos.setEnabled(true);
+        } catch (SQLException sqlex) {
+            reiniciarCamposEliminarModelo();
+            JOptionPane.showMessageDialog(
+                    null,
+                    sqlex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            reiniciarCamposEliminarModelo();
+            JOptionPane.showMessageDialog(
+                    null,
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     /**
      * Método usado para resetear los campos de la sección Crear Marca de cara a
      * una nueva inserción.
@@ -747,7 +922,49 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      * cara a una nueva modificación.
      */
     private void reiniciarCamposModificarModelo() {
+        jcbModelosModificar.setSelectedIndex(0);
+        jcbNuevaMarcaModelo.setSelectedIndex(0);
+        jcbNuevaEficienciaModelo.setSelectedIndex(0);
 
+        jtfNuevoNombreModeloModificar.setText("");
+        jtfNuevoConsumoModelo.setText("");
+        jtfNuevasEmisionesModelo.setText("");
+
+        alModelos.clear();
+        limpiarTablas();
+        try {
+            alModelos = ges.buscarModelos();
+            if (alModelos.size() == 0) {
+                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
+                ges.resetearAutoincrementalModelo();
+            } else {
+                for (int i = 0; i < alModelos.size(); i++) {
+                    /* Incrementa filas: */
+                    dtmModelos.setRowCount(dtmModelos.getRowCount() + 1);
+                    /* Recupera el nombre de la marca y la eficiencia según sus ID's: */
+                    String nombreMarca = ges.buscarMarcaPorId(alModelos.get(i).getId_marca());
+                    String nombreEficiencia = ges.buscarEficienciasPorId(alModelos.get(i).getId_eficiencia());
+                    jtTablaModificarModelo.setValueAt(nombreMarca, i, 0);
+                    jtTablaModificarModelo.setValueAt(alModelos.get(i).getNombre_modelo(), i, 1);
+                    jtTablaModificarModelo.setValueAt(alModelos.get(i).getConsumo_modelo(), i, 2);
+                    jtTablaModificarModelo.setValueAt(alModelos.get(i).getEmisiones_modelo(), i, 3);
+                    jtTablaModificarModelo.setValueAt(nombreEficiencia, i, 4);
+                }
+            }
+            cargarMarcasEficienciasNuevoModelo();
+        } catch (SQLException sqlex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    sqlex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -777,6 +994,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     jtTablaEliminarModelo.setValueAt(nombreEficiencia, i, 4);
                 }
             }
+            cargarMarcasEficienciasNuevoModelo();
         } catch (SQLException sqlex) {
             JOptionPane.showMessageDialog(
                     null,
@@ -790,6 +1008,22 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    /**
+     * Método usado para resetear los campos de la sección Consultar Modelo de
+     * cara a una nueva consulta.
+     */
+    private void reiniciarCamposConsultarModelo() {
+        jcbMarcasConsultaModelos.setSelectedIndex(0);
+        jlConsumoConsultaModelos.setText("Consumo máximo: --- L/100km");
+        jslSelectorConsumo.setValue(50);
+        jlEmisionesConsultaModelos.setText("Emisiones máximas: --- gCO2/km");
+        jslSelectorEmisiones.setValue(50);
+        jcbEficienciasConsultaModelos.setSelectedIndex(0);
+        jbExportarModelos.setEnabled(false);
+        limpiarTablas();
+        cargarMarcasEficienciasNuevoModelo();
     }
 
     @SuppressWarnings("unchecked")
@@ -857,8 +1091,10 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlNuevaMarcaModelo = new javax.swing.JLabel();
         jcbNuevaMarcaModelo = new javax.swing.JComboBox<>();
         jlNuevoConsumoModelo = new javax.swing.JLabel();
+        jlUnidadesConsumoModificarModelo = new javax.swing.JLabel();
         jtfNuevoConsumoModelo = new javax.swing.JTextField();
         jlNuevasEmisionesModelo = new javax.swing.JLabel();
+        jlUnidadesEmisionesModificarModelo = new javax.swing.JLabel();
         jtfNuevasEmisionesModelo = new javax.swing.JTextField();
         jlNuevaEficienciaModelo = new javax.swing.JLabel();
         jcbNuevaEficienciaModelo = new javax.swing.JComboBox<>();
@@ -871,13 +1107,27 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlNombreModeloEliminar = new javax.swing.JLabel();
         jtfNombreModeloEliminar = new javax.swing.JTextField();
         jbEliminarModelo = new javax.swing.JButton();
+        jpConsultarModelo = new javax.swing.JPanel();
+        jlTituloConsultarModelo = new javax.swing.JLabel();
+        jsSeparadorConsultaModelo = new javax.swing.JSeparator();
+        jlMarcaConsultaModelos = new javax.swing.JLabel();
+        jcbMarcasConsultaModelos = new javax.swing.JComboBox<>();
+        jlConsumoConsultaModelos = new javax.swing.JLabel();
+        jslSelectorConsumo = new javax.swing.JSlider();
+        jlEficienciaConsultaModelos = new javax.swing.JLabel();
+        jcbEficienciasConsultaModelos = new javax.swing.JComboBox<>();
+        jlEmisionesConsultaModelos = new javax.swing.JLabel();
+        jslSelectorEmisiones = new javax.swing.JSlider();
+        jbConsultarModelos = new javax.swing.JButton();
+        jspTablaConsultaModelos = new javax.swing.JScrollPane();
+        jtTablaConsultaModelos = new javax.swing.JTable();
+        jbExportarModelos = new javax.swing.JButton();
         jmbBarraMenu = new javax.swing.JMenuBar();
         jmModulos = new javax.swing.JMenu();
         jmiConectar = new javax.swing.JMenuItem();
         jmInfo = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(600, 400));
 
         jlTituloCrearMarca.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jlTituloCrearMarca.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -912,7 +1162,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             .addGroup(jpCrearMarcaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpCrearMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                    .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                     .addComponent(jsSeparadorCrearMarca)
                     .addComponent(jlTituloCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearMarcaLayout.createSequentialGroup()
@@ -932,7 +1182,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorCrearMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .addComponent(jspTablaCrearMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpCrearMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlNombreNuevaMarca)
@@ -999,7 +1249,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                                 .addComponent(jlNombreMarcaActualModificar)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jcbMarcasModificar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                            .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpModificarMarcaLayout.createSequentialGroup()
                                 .addComponent(jlNuevoNombreMarcaModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1018,7 +1268,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     .addComponent(jlNombreMarcaActualModificar)
                     .addComponent(jcbMarcasModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+                .addComponent(jspTablaModificarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfNuevoNombreMarcaModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1063,7 +1313,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             .addGroup(jpEliminarMarcaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                    .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                     .addComponent(jlTituloEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jsSeparadorEliminarMarca)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarMarcaLayout.createSequentialGroup()
@@ -1083,7 +1333,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorEliminarMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .addComponent(jspTablaEliminarMarca, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEliminarMarcaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlNombreMarcaEliminar)
@@ -1127,6 +1377,12 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jlNombreNuevoModelo.setText("Nombre del nuevo modelo:");
 
+        jtfNombreNuevoModelo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtfNombreNuevoModeloActionPerformed(evt);
+            }
+        });
+
         jlMarcaNuevoModelo.setText("Marca del nuevo modelo:");
 
         jcbMarcaNuevoModelo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una marca..." }));
@@ -1159,35 +1415,36 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jlTituloCrearModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jsSeparadorCrearModelo)
-                    .addComponent(jspTablaCrearModelo)
-                    .addGroup(jpCrearModeloLayout.createSequentialGroup()
-                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jlConsumoNuevoModelo)
-                            .addComponent(jlEmisionesNuevoModelo)
-                            .addComponent(jlMarcaNuevoModelo))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jpCrearModeloLayout.createSequentialGroup()
-                                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jtfEmisionesNuevoModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
-                                    .addComponent(jtfConsumoNuevoModelo))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jlUnidadesConsumoNuevoModelo)
-                                    .addComponent(jlUnidadesEmisionesNuevoModelo, javax.swing.GroupLayout.Alignment.TRAILING)))
-                            .addComponent(jcbMarcaNuevoModelo, 0, 432, Short.MAX_VALUE)))
+                    .addComponent(jspTablaCrearModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearModeloLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpCrearModeloLayout.createSequentialGroup()
+                            .addGroup(jpCrearModeloLayout.createSequentialGroup()
                                 .addComponent(jlEficienciaNuevoModelo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jcbEficienciaNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 432, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jcbEficienciaNuevoModelo, 0, 438, Short.MAX_VALUE))
                             .addComponent(jbCrearModelo, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jpCrearModeloLayout.createSequentialGroup()
-                                .addComponent(jlNombreNuevoModelo)
-                                .addGap(22, 22, 22)
-                                .addComponent(jtfNombreNuevoModelo)))))
+                                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jlConsumoNuevoModelo)
+                                    .addComponent(jlMarcaNuevoModelo)
+                                    .addComponent(jlNombreNuevoModelo)
+                                    .addComponent(jlEmisionesNuevoModelo))
+                                .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jpCrearModeloLayout.createSequentialGroup()
+                                        .addGap(8, 8, 8)
+                                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jtfEmisionesNuevoModelo)
+                                            .addComponent(jtfConsumoNuevoModelo))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jlUnidadesConsumoNuevoModelo)
+                                            .addComponent(jlUnidadesEmisionesNuevoModelo, javax.swing.GroupLayout.Alignment.TRAILING)))
+                                    .addGroup(jpCrearModeloLayout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jtfNombreNuevoModelo, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jcbMarcaNuevoModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))))
                 .addContainerGap())
         );
         jpCrearModeloLayout.setVerticalGroup(
@@ -1198,7 +1455,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorCrearModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaCrearModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jspTablaCrearModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpCrearModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfNombreNuevoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1223,7 +1480,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     .addComponent(jlEficienciaNuevoModelo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbCrearModelo)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jtpSeccionesModelos.addTab("Crear modelo", jpCrearModelo);
@@ -1257,7 +1514,11 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jlNuevoConsumoModelo.setText("Nuevo consumo del modelo:");
 
+        jlUnidadesConsumoModificarModelo.setText("L/100km");
+
         jlNuevasEmisionesModelo.setText("Nuevas emisiones del modelo:");
+
+        jlUnidadesEmisionesModificarModelo.setText("gCO2/km");
 
         jlNuevaEficienciaModelo.setText("Nueva eficiencia del modelo:");
 
@@ -1284,30 +1545,37 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                         .addComponent(jlNombreModeloActualModificar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jcbModelosModificar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpModificarModeloLayout.createSequentialGroup()
-                        .addComponent(jlNuevoNombreModeloModificar)
+                    .addGroup(jpModificarModeloLayout.createSequentialGroup()
+                        .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpModificarModeloLayout.createSequentialGroup()
+                                .addComponent(jlNuevasEmisionesModelo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(jpModificarModeloLayout.createSequentialGroup()
+                                .addComponent(jlNuevoConsumoModelo)
+                                .addGap(19, 19, 19)))
+                        .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jtfNuevoConsumoModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                            .addComponent(jtfNuevasEmisionesModelo))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jpModificarModeloLayout.createSequentialGroup()
-                                .addGap(0, 320, Short.MAX_VALUE)
-                                .addComponent(jbModificarModelo))
+                            .addComponent(jlUnidadesConsumoModificarModelo)
+                            .addComponent(jlUnidadesEmisionesModificarModelo, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(jpModificarModeloLayout.createSequentialGroup()
+                        .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jlNuevaMarcaModelo)
+                            .addComponent(jlNuevoNombreModeloModificar))
+                        .addGap(28, 28, 28)
+                        .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jcbNuevaMarcaModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jtfNuevoNombreModeloModificar)))
-                    .addGroup(jpModificarModeloLayout.createSequentialGroup()
-                        .addComponent(jlNuevaEficienciaModelo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcbNuevaEficienciaModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jpModificarModeloLayout.createSequentialGroup()
-                        .addComponent(jlNuevasEmisionesModelo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfNuevasEmisionesModelo))
-                    .addGroup(jpModificarModeloLayout.createSequentialGroup()
-                        .addComponent(jlNuevoConsumoModelo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtfNuevoConsumoModelo))
-                    .addGroup(jpModificarModeloLayout.createSequentialGroup()
-                        .addComponent(jlNuevaMarcaModelo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jcbNuevaMarcaModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpModificarModeloLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jpModificarModeloLayout.createSequentialGroup()
+                                .addComponent(jlNuevaEficienciaModelo)
+                                .addGap(18, 18, 18)
+                                .addComponent(jcbNuevaEficienciaModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jbModificarModelo))))
                 .addContainerGap())
         );
         jpModificarModeloLayout.setVerticalGroup(
@@ -1322,28 +1590,30 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     .addComponent(jcbModelosModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlNombreModeloActualModificar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaModificarModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jspTablaModificarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfNuevoNombreModeloModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlNuevoNombreModeloModificar))
-                .addGap(13, 13, 13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jlNuevaMarcaModelo)
-                    .addComponent(jcbNuevaMarcaModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jcbNuevaMarcaModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jlNuevaMarcaModelo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jtfNuevoConsumoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlNuevoConsumoModelo)
-                    .addComponent(jtfNuevoConsumoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jlUnidadesConsumoModificarModelo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfNuevasEmisionesModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jlNuevasEmisionesModelo))
+                    .addComponent(jlNuevasEmisionesModelo)
+                    .addComponent(jlUnidadesEmisionesModificarModelo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpModificarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jcbNuevaEficienciaModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jlNuevaEficienciaModelo))
-                .addGap(28, 28, 28)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbModificarModelo)
                 .addContainerGap())
         );
@@ -1383,7 +1653,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             .addGroup(jpEliminarModeloLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jspTablaEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                    .addComponent(jspTablaEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                     .addComponent(jlTituloEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jsSeparadorEliminarModelo)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEliminarModeloLayout.createSequentialGroup()
@@ -1403,7 +1673,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jsSeparadorEliminarModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jspTablaEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                .addComponent(jspTablaEliminarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEliminarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfNombreModeloEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1415,15 +1685,133 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jtpSeccionesModelos.addTab("Eliminar modelo", jpEliminarModelo);
 
+        jlTituloConsultarModelo.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jlTituloConsultarModelo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jlTituloConsultarModelo.setText("CONSULTAR MODELO");
+
+        jlMarcaConsultaModelos.setText("Marca:");
+
+        jcbMarcasConsultaModelos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una marca..." }));
+
+        jlConsumoConsultaModelos.setText("Consumo máximo: --- L/100km");
+
+        jslSelectorConsumo.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jslSelectorConsumoStateChanged(evt);
+            }
+        });
+
+        jlEficienciaConsultaModelos.setText("Eficiencia:");
+
+        jcbEficienciasConsultaModelos.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione una eficiencia..." }));
+
+        jlEmisionesConsultaModelos.setText("Emisiones máximas: --- gCO2/km");
+
+        jslSelectorEmisiones.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jslSelectorEmisionesStateChanged(evt);
+            }
+        });
+
+        jbConsultarModelos.setText("Consultar modelos");
+        jbConsultarModelos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbConsultarModelosActionPerformed(evt);
+            }
+        });
+
+        jtTablaConsultaModelos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jspTablaConsultaModelos.setViewportView(jtTablaConsultaModelos);
+
+        jbExportarModelos.setText("Exportar informe");
+        jbExportarModelos.setEnabled(false);
+
+        javax.swing.GroupLayout jpConsultarModeloLayout = new javax.swing.GroupLayout(jpConsultarModelo);
+        jpConsultarModelo.setLayout(jpConsultarModeloLayout);
+        jpConsultarModeloLayout.setHorizontalGroup(
+            jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpConsultarModeloLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jspTablaConsultaModelos, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
+                    .addGroup(jpConsultarModeloLayout.createSequentialGroup()
+                        .addComponent(jlMarcaConsultaModelos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jlConsumoConsultaModelos))
+                    .addComponent(jlTituloConsultarModelo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jsSeparadorConsultaModelo)
+                    .addGroup(jpConsultarModeloLayout.createSequentialGroup()
+                        .addComponent(jlEficienciaConsultaModelos)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jlEmisionesConsultaModelos))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpConsultarModeloLayout.createSequentialGroup()
+                        .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jcbEficienciasConsultaModelos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jcbMarcasConsultaModelos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jslSelectorConsumo, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                            .addComponent(jslSelectorEmisiones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpConsultarModeloLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jbExportarModelos, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jbConsultarModelos, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap())
+        );
+        jpConsultarModeloLayout.setVerticalGroup(
+            jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jpConsultarModeloLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jlTituloConsultarModelo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jsSeparadorConsultaModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jlMarcaConsultaModelos)
+                    .addComponent(jlConsumoConsultaModelos))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jcbMarcasConsultaModelos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jslSelectorConsumo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24)
+                .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jlEficienciaConsultaModelos)
+                    .addComponent(jlEmisionesConsultaModelos))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jslSelectorEmisiones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcbEficienciasConsultaModelos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jbConsultarModelos)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jspTablaConsultaModelos, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jbExportarModelos)
+                .addContainerGap())
+        );
+
+        jtpSeccionesModelos.addTab("Consultar modelo", jpConsultarModelo);
+
         javax.swing.GroupLayout jpModelosLayout = new javax.swing.GroupLayout(jpModelos);
         jpModelos.setLayout(jpModelosLayout);
         jpModelosLayout.setHorizontalGroup(
             jpModelosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jtpSeccionesModelos, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
+            .addComponent(jtpSeccionesModelos)
         );
         jpModelosLayout.setVerticalGroup(
             jpModelosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jtpSeccionesModelos, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
+            .addComponent(jtpSeccionesModelos)
         );
 
         jtpVentanasModulos.addTab("Modelos", jpModelos);
@@ -1504,6 +1892,22 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         eliminarModelo();
     }//GEN-LAST:event_jbEliminarModeloActionPerformed
 
+    private void jslSelectorConsumoStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jslSelectorConsumoStateChanged
+        jlConsumoConsultaModelos.setText("Consumo máximo: " + jslSelectorConsumo.getValue() + " L/100km");
+    }//GEN-LAST:event_jslSelectorConsumoStateChanged
+
+    private void jslSelectorEmisionesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jslSelectorEmisionesStateChanged
+        jlEmisionesConsultaModelos.setText("Emisiones máximas: " + jslSelectorEmisiones.getValue() + " gCO2/km");
+    }//GEN-LAST:event_jslSelectorEmisionesStateChanged
+
+    private void jbConsultarModelosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbConsultarModelosActionPerformed
+        consultarModelos();
+    }//GEN-LAST:event_jbConsultarModelosActionPerformed
+
+    private void jtfNombreNuevoModeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfNombreNuevoModeloActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtfNombreNuevoModeloActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1540,21 +1944,29 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jbConsultarModelos;
     private javax.swing.JButton jbCrearMarca;
     private javax.swing.JButton jbCrearModelo;
     private javax.swing.JButton jbEliminarMarca;
     private javax.swing.JButton jbEliminarModelo;
+    private javax.swing.JButton jbExportarModelos;
     private javax.swing.JButton jbModificarMarca;
     private javax.swing.JButton jbModificarModelo;
     private javax.swing.JComboBox<String> jcbEficienciaNuevoModelo;
+    private javax.swing.JComboBox<String> jcbEficienciasConsultaModelos;
     private javax.swing.JComboBox<String> jcbMarcaNuevoModelo;
+    private javax.swing.JComboBox<String> jcbMarcasConsultaModelos;
     private javax.swing.JComboBox<String> jcbMarcasModificar;
     private javax.swing.JComboBox<String> jcbModelosModificar;
     private javax.swing.JComboBox<String> jcbNuevaEficienciaModelo;
     private javax.swing.JComboBox<String> jcbNuevaMarcaModelo;
+    private javax.swing.JLabel jlConsumoConsultaModelos;
     private javax.swing.JLabel jlConsumoNuevoModelo;
+    private javax.swing.JLabel jlEficienciaConsultaModelos;
     private javax.swing.JLabel jlEficienciaNuevoModelo;
+    private javax.swing.JLabel jlEmisionesConsultaModelos;
     private javax.swing.JLabel jlEmisionesNuevoModelo;
+    private javax.swing.JLabel jlMarcaConsultaModelos;
     private javax.swing.JLabel jlMarcaNuevoModelo;
     private javax.swing.JLabel jlNombreMarcaActualModificar;
     private javax.swing.JLabel jlNombreMarcaEliminar;
@@ -1568,18 +1980,22 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private javax.swing.JLabel jlNuevoConsumoModelo;
     private javax.swing.JLabel jlNuevoNombreMarcaModificar;
     private javax.swing.JLabel jlNuevoNombreModeloModificar;
+    private javax.swing.JLabel jlTituloConsultarModelo;
     private javax.swing.JLabel jlTituloCrearMarca;
     private javax.swing.JLabel jlTituloCrearModelo;
     private javax.swing.JLabel jlTituloEliminarMarca;
     private javax.swing.JLabel jlTituloEliminarModelo;
     private javax.swing.JLabel jlTituloModificarMarca;
     private javax.swing.JLabel jlTituloModificarModelo;
+    private javax.swing.JLabel jlUnidadesConsumoModificarModelo;
     private javax.swing.JLabel jlUnidadesConsumoNuevoModelo;
+    private javax.swing.JLabel jlUnidadesEmisionesModificarModelo;
     private javax.swing.JLabel jlUnidadesEmisionesNuevoModelo;
     private javax.swing.JMenu jmInfo;
     private javax.swing.JMenu jmModulos;
     private javax.swing.JMenuBar jmbBarraMenu;
     private javax.swing.JMenuItem jmiConectar;
+    private javax.swing.JPanel jpConsultarModelo;
     private javax.swing.JPanel jpCrearMarca;
     private javax.swing.JPanel jpCrearModelo;
     private javax.swing.JPanel jpEliminarMarca;
@@ -1588,18 +2004,23 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private javax.swing.JPanel jpModelos;
     private javax.swing.JPanel jpModificarMarca;
     private javax.swing.JPanel jpModificarModelo;
+    private javax.swing.JSeparator jsSeparadorConsultaModelo;
     private javax.swing.JSeparator jsSeparadorCrearMarca;
     private javax.swing.JSeparator jsSeparadorCrearModelo;
     private javax.swing.JSeparator jsSeparadorEliminarMarca;
     private javax.swing.JSeparator jsSeparadorEliminarModelo;
     private javax.swing.JSeparator jsSeparadorModificarMarca;
     private javax.swing.JSeparator jsSeparadorModificarModelo;
+    private javax.swing.JSlider jslSelectorConsumo;
+    private javax.swing.JSlider jslSelectorEmisiones;
+    private javax.swing.JScrollPane jspTablaConsultaModelos;
     private javax.swing.JScrollPane jspTablaCrearMarca;
     private javax.swing.JScrollPane jspTablaCrearModelo;
     private javax.swing.JScrollPane jspTablaEliminarMarca;
     private javax.swing.JScrollPane jspTablaEliminarModelo;
     private javax.swing.JScrollPane jspTablaModificarMarca;
     private javax.swing.JScrollPane jspTablaModificarModelo;
+    private javax.swing.JTable jtTablaConsultaModelos;
     private javax.swing.JTable jtTablaCrearMarca;
     private javax.swing.JTable jtTablaCrearModelo;
     private javax.swing.JTable jtTablaEliminarMarca;

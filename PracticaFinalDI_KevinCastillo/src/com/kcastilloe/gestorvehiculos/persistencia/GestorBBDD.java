@@ -206,7 +206,6 @@ public class GestorBBDD {
             this.abrirConexion();
         }
         try {
-            /* NOTA: EL ID_MARCA HAY QUE PASARLO COMO PARÁMETRO EN LUGAR DE HARDCODE. RECOGERLO CON UN OBJETO MARCA DESDE LA INTERFAZ. */
             sql = "update marcas set nombre_marca = ? where id_marca = ?";
             ps = conexion.prepareStatement(sql);
             ps.setString(1, marcaModificada.getNombre_marca());
@@ -312,7 +311,7 @@ public class GestorBBDD {
             this.abrirConexion();
         }
         try {
-            sql = "select * from modelos order by nombre_modelo";
+            sql = "select * from modelos order by id_modelo";
             ps = conexion.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -398,7 +397,7 @@ public class GestorBBDD {
             this.abrirConexion();
         }
         try {
-            sql = "insert into modelos (nombre_modelo, id_marca, id_eficiencia, consumo_modelo, emisiones_modelo) VALUES (?,?,?,?,?)";
+            sql = "insert into modelos (nombre_modelo, id_marca, id_eficiencia, consumo_modelo, emisiones_modelo) values (?,?,?,?,?)";
             ps = conexion.prepareStatement(sql);
             ps.setString(1, nuevoModelo.getNombre_modelo());
             ps.setInt(2, nuevoModelo.getId_marca());
@@ -456,12 +455,46 @@ public class GestorBBDD {
             sql = "delete from modelos where id_modelo = " + id_modelo;
             ps = conexion.prepareStatement(sql);
             filasAfectadas = ps.executeUpdate();
-            //System.out.println("Registros eliminados: " + filasAfectadas + "\n");
             return filasAfectadas;
         } catch (SQLException ex) {
             System.out.println("No se ha encontrado la base de datos.");
         }
         return 9;
+    }
+    
+    public ArrayList buscarModelosEspecificos(Modelo modeloBusqueda) throws SQLException, Exception{
+        int id_modelo = 0;
+        String nombre_modelo = null;
+        float consumo_modelo = 0f;
+        float emisiones_modelo = 0f;
+        
+        ArrayList<Modelo> alModelos = new ArrayList();
+        
+        /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
+        if (conexion == null) {
+            this.abrirConexion();
+        }
+        try {
+            /* Selecciona los máximos consumos y emisiones para luego aplicarlos al rango de los JSliders. */
+            sql = "select * from modelos where id_marca = ? and consumo_modelo <= ? and emisiones_modelo <= ? and id_eficiencia <= ? order by id_modelo";
+            ps = conexion.prepareStatement(sql);
+            ps.setInt(1, modeloBusqueda.getId_marca());
+            ps.setFloat(2, modeloBusqueda.getConsumo_modelo());
+            ps.setFloat(3, modeloBusqueda.getEmisiones_modelo());
+            ps.setInt(1, modeloBusqueda.getId_eficiencia());
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                id_modelo = rs.getInt("id_modelo");
+                nombre_modelo = rs.getString("nombre_modelo");
+                consumo_modelo = rs.getFloat("consumo_modelo");
+                emisiones_modelo = rs.getFloat("emisiones_modelo");
+                miModelo = new Modelo(id_modelo, nombre_modelo, modeloBusqueda.getId_marca(), modeloBusqueda.getId_eficiencia(), consumo_modelo, emisiones_modelo);
+                alModelos.add(miModelo);
+            }
+        } catch (SQLException sqlex) {
+            throw new SQLException("Imposible conectar a la base de datos.");
+        }
+        return alModelos;
     }
     
     /**

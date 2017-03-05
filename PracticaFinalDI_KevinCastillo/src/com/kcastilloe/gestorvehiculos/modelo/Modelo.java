@@ -70,6 +70,24 @@ public class Modelo {
         this.nombre_modelo = nombre_modelo;
     }
 
+    /**
+     * Constructor usado para la búsqueda de modelos específicos para consulta
+     * según sus parámetros.
+     * 
+     * @param id_marca El id de la marca del modelo a consultar.
+     * @param consumo_modelo El consumo máximo del modelo a consultar.
+     * @param emisiones_modelo Las emisiones máximas del modelo a consultar.
+     * @param id_eficiencia El id de la eficiencia del modelo a consultar.
+     */
+    public Modelo(int id_marca, float consumo_maximo_modelo, float emisiones_maximas_modelo, int id_eficiencia) {
+        this.id_marca = id_marca;
+        this.consumo_modelo = consumo_modelo;
+        this.emisiones_modelo = emisiones_modelo;
+        this.id_eficiencia = id_eficiencia;
+    }
+
+    
+    
     public int getId_modelo() {
         return id_modelo;
     }
