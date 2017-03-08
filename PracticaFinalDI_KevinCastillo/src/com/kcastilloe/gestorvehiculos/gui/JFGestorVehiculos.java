@@ -4,15 +4,14 @@ import com.kcastilloe.gestorvehiculos.modelo.Eficiencia;
 import com.kcastilloe.gestorvehiculos.modelo.Marca;
 import com.kcastilloe.gestorvehiculos.modelo.Modelo;
 import com.kcastilloe.gestorvehiculos.persistencia.GestorBBDD;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Image;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JComboBox;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -48,6 +47,17 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     public JFGestorVehiculos() {
         initComponents();
         this.setBounds(300, 150, 800, 600);
+        this.setTitle("Gestor de Vehículos - Kevin Castillo");
+        
+        /* Icono de aplicación. */
+        try {
+            Image icono = ImageIO.read(new File("recursos/icono.png"));
+            this.setIconImage(icono);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "No se ha podido poner icono de aplicación.", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
         bloquearElementosIniciales();
         /* Columnas de las tablas de Marcas: */
         vMarcas.clear();
@@ -142,7 +152,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             reiniciarCamposEliminarModelo();
             reiniciarCamposConsultarModelo();
             cargarMarcasModificables();
-            cargarMarcasEficienciasNuevoModelo();
+            cargarMarcasEficienciasModelo();
         } catch (SQLException sqlex) {
             JOptionPane.showMessageDialog(
                     null,
@@ -189,11 +199,11 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * Método encargado de rellenar dinámicamente los JComboBox de Modelo.
      */
-    private void cargarMarcasEficienciasNuevoModelo() {
+    private void cargarMarcasEficienciasModelo() {
         try {
             /* Buscar todos los modelos, marcas y eficiencias. */
             alMarcas = ges.buscarMarcas();
@@ -201,7 +211,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             alEficiencias = ges.buscarEficiencias();
 
             /* Combobox de marcas de Crear Modelo.*/
-            /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
+ /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
             for (int i = jcbMarcaNuevoModelo.getItemCount() - 1; i > 0; i--) {
                 jcbMarcaNuevoModelo.removeItemAt(i);
             }
@@ -211,7 +221,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
 
             /* Combobox de eficiencias de Crear Modelo.*/
-            /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
+ /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
             for (int i = jcbEficienciaNuevoModelo.getItemCount() - 1; i > 0; i--) {
                 jcbEficienciaNuevoModelo.removeItemAt(i);
             }
@@ -221,7 +231,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
 
             /* Combobox de modelos de Modificar Modelo. */
-            /* Borra los elementos (si los hubiera) que no son "Seleccione un modelo...". */
+ /* Borra los elementos (si los hubiera) que no son "Seleccione un modelo...". */
             for (int i = jcbModelosModificar.getItemCount() - 1; i > 0; i--) {
                 jcbModelosModificar.removeItemAt(i);
             }
@@ -231,7 +241,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
 
             /* Combobox de marcas de Modificar Modelo. */
-            /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
+ /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
             for (int i = jcbNuevaMarcaModelo.getItemCount() - 1; i > 0; i--) {
                 jcbNuevaMarcaModelo.removeItemAt(i);
             }
@@ -241,7 +251,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
 
             /* Combobox de eficiencias de Modificar Modelo.*/
-            /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
+ /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
             for (int i = jcbNuevaEficienciaModelo.getItemCount() - 1; i > 0; i--) {
                 jcbNuevaEficienciaModelo.removeItemAt(i);
             }
@@ -249,9 +259,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             for (int i = 0; i < alEficiencias.size(); i++) {
                 jcbNuevaEficienciaModelo.addItem(alEficiencias.get(i).getNombre_eficiencia());
             }
-            
+
             /* Combobox de marcas de Consultar Modelo. */
-            /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
+ /* Borra los elementos (si los hubiera) que no son "Seleccione una marca...". */
             for (int i = jcbMarcasConsultaModelos.getItemCount() - 1; i > 0; i--) {
                 jcbMarcasConsultaModelos.removeItemAt(i);
             }
@@ -259,9 +269,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             for (int i = 0; i < alMarcas.size(); i++) {
                 jcbMarcasConsultaModelos.addItem(alMarcas.get(i).getNombre_marca());
             }
-            
+
             /* Combobox de eficiencias de Consultar Modelo. */
-            /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
+ /* Borra los elementos (si los hubiera) que no son "Seleccione una eficiencia...". */
             for (int i = jcbEficienciasConsultaModelos.getItemCount() - 1; i > 0; i--) {
                 jcbEficienciasConsultaModelos.removeItemAt(i);
             }
@@ -716,47 +726,161 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      * usuario.
      */
     private void consultarModelos() {
-        int idBusqueda = jcbMarcasConsultaModelos.getSelectedIndex();
-        int consumoMaximoSeleccionado = jslSelectorConsumo.getValue();
-        int emisionesMaximasSeleccionadas = jslSelectorEmisiones.getValue();
-        int idEficiencia = jcbEficienciasConsultaModelos.getSelectedIndex();
-        miModelo = new Modelo(idBusqueda, consumoMaximoSeleccionado, emisionesMaximasSeleccionadas, idEficiencia);
-        try {
-            alModelos.clear();
-            limpiarTablas();
-            alModelos = ges.buscarModelosEspecificos(miModelo);
-            if (alModelos.size() == 0) {
-                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
-                ges.resetearAutoincrementalModelo();
+        String marcaBusqueda = (String) jcbMarcasConsultaModelos.getSelectedItem();
+        if (marcaBusqueda.compareToIgnoreCase("Seleccione una marca...") == 0) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Seleccione una marca válida en el selector desplegable.",
+                    "Información",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            int idMarca = jcbMarcasConsultaModelos.getSelectedIndex();
+            if (jlConsumoConsultaModelos.getText().compareToIgnoreCase("Consumo máximo: --- L/100km") == 0) {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "Seleccione un consumo válido en el selector deslizable.",
+                        "Información",
+                        JOptionPane.INFORMATION_MESSAGE);
             } else {
-                for (int i = 0; i < alModelos.size(); i++) {
-                    /* Incrementa filas: */
-                    dtmModelos.setRowCount(dtmModelos.getRowCount() + 1);
-                    /* Recupera el nombre de la marca y la eficiencia según sus ID's: */
-                    String nombreMarca = ges.buscarMarcaPorId(alModelos.get(i).getId_marca());
-                    String nombreEficiencia = ges.buscarEficienciasPorId(alModelos.get(i).getId_eficiencia());
-                    jtTablaConsultaModelos.setValueAt(nombreMarca, i, 0);
-                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getNombre_modelo(), i, 1);
-                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getConsumo_modelo(), i, 2);
-                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getEmisiones_modelo(), i, 3);
-                    jtTablaConsultaModelos.setValueAt(nombreEficiencia, i, 4);
+                float consumoMaximoSeleccionado = jslSelectorConsumo.getValue();
+                String eficienciaBusqueda = (String) jcbEficienciasConsultaModelos.getSelectedItem();
+                if (eficienciaBusqueda.compareToIgnoreCase("Seleccione una eficiencia...") == 0) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Seleccione una eficiencia válida en el selector desplegable.",
+                            "Información",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    int idEficiencia = jcbEficienciasConsultaModelos.getSelectedIndex();
+                    if (jlEmisionesConsultaModelos.getText().compareToIgnoreCase("Emisiones máximas: --- gCO2/km") == 0) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Seleccione unas emisiones válidas en el selector deslizable.",
+                                "Información",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        float emisionesMaximasSeleccionadas = jslSelectorEmisiones.getValue();
+                        miModelo = new Modelo(idMarca, consumoMaximoSeleccionado, emisionesMaximasSeleccionadas, idEficiencia);
+                        try {
+                            alModelos.clear();
+                            limpiarTablas();
+                            alModelos = ges.buscarModelosEspecificos(miModelo);
+                            if (alModelos.size() == 0) {
+                                /* Por cuestiones de estética, si no hubiese registros reseta el autoincremental para los futuros registros. */
+                                ges.resetearAutoincrementalModelo();
+                            } else {
+                                for (int i = 0; i < alModelos.size(); i++) {
+                                    /* Incrementa filas: */
+                                    dtmModelos.setRowCount(dtmModelos.getRowCount() + 1);
+                                    /* Recupera el nombre de la marca y la eficiencia según sus ID's: */
+                                    String nombreMarca = ges.buscarMarcaPorId(alModelos.get(i).getId_marca());
+                                    String nombreEficiencia = ges.buscarEficienciasPorId(alModelos.get(i).getId_eficiencia());
+                                    jtTablaConsultaModelos.setValueAt(nombreMarca, i, 0);
+                                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getNombre_modelo(), i, 1);
+                                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getConsumo_modelo(), i, 2);
+                                    jtTablaConsultaModelos.setValueAt(alModelos.get(i).getEmisiones_modelo(), i, 3);
+                                    jtTablaConsultaModelos.setValueAt(nombreEficiencia, i, 4);
+                                }
+                            }
+                            jbReiniciarConsulta.setEnabled(true);
+                            jbExportarModelos.setEnabled(true);
+                        } catch (SQLException sqlex) {
+                            reiniciarCamposEliminarModelo();
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    sqlex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        } catch (Exception ex) {
+                            reiniciarCamposEliminarModelo();
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                 }
             }
-            jbExportarModelos.setEnabled(true);
-        } catch (SQLException sqlex) {
-            reiniciarCamposEliminarModelo();
-            JOptionPane.showMessageDialog(
-                    null,
-                    sqlex.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ex) {
-            reiniciarCamposEliminarModelo();
-            JOptionPane.showMessageDialog(
-                    null,
-                    ex.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Método usado para exportar a un documento .csv (compatible con Microsoft
+     * Excel) los resultados de la consulta realizada.
+     *
+     */
+    private void exportarResultadosConsulta() {
+        String nombre_marca = null;
+        String nombre_modelo = null;
+        float consumo_modelo = 0f;
+        float emisiones_modelo = 0f;
+        String eficiencia_modelo = null;
+        String nombreFichero = null;
+        boolean nombreCorrecto = false;
+        alModelos.clear();
+        /* Primero recoge los modelos que han resultado de la consulta y figuran en la tabla. */
+        for (int i = 0; i < jtTablaConsultaModelos.getRowCount(); i++) {
+            nombre_marca = jtTablaConsultaModelos.getValueAt(i, 0).toString();
+            nombre_modelo = jtTablaConsultaModelos.getValueAt(i, 1).toString();
+            consumo_modelo = Float.parseFloat(jtTablaConsultaModelos.getValueAt(i, 2).toString());
+            emisiones_modelo = Float.parseFloat(jtTablaConsultaModelos.getValueAt(i, 3).toString());
+            eficiencia_modelo = jtTablaConsultaModelos.getValueAt(i, 4).toString();
+            /* Crea un nuevo objeto Modelo para cada fila de la tabla. */
+            miModelo = new Modelo(nombre_marca, nombre_modelo, eficiencia_modelo, consumo_modelo, emisiones_modelo);
+            /* Lo añade al ArrayList de Modelos. */
+            alModelos.add(miModelo);
+        }
+
+        /* Pide nombre para el documento exportado. */
+        while (!nombreCorrecto) {
+
+            /* Lo siguiente es pedir al usuario un nombre para el fichero. */
+            nombreFichero = JOptionPane.showInputDialog(null, "Seleccione un nombre para el fichero .csv:",
+                    "Nombre del fichero", JOptionPane.INFORMATION_MESSAGE);
+            if (nombreFichero == null) {
+                JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún nombre de fichero.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (nombreFichero.trim().compareToIgnoreCase("") == 0) {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar un nombre válido para el fichero.",
+                        "Información", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                nombreCorrecto = true;
+            }
+        }
+        /* Creación del documento. */
+        if (nombreCorrecto) {
+            /* Evalúa que de verdad el nombre sea correcto por si el usuario cierra el InputDialog.*/
+            PrintWriter fichero = null;
+            try {
+                fichero = new PrintWriter(nombreFichero + ".csv");
+                /* Nombre del fichero. */
+                fichero.println("Marca;Modelo;Consumo;Emisiones;Eficiencia");
+                /* Campos. */
+                /* A continuación recorre el ArrayList e imprime cada registro en el documento. */
+                for (int i = 0; i < alModelos.size(); i++) {
+                    fichero.println("" + alModelos.get(i).getNombre_marca() + ";"
+                            + alModelos.get(i).getNombre_modelo() + ";"
+                            + alModelos.get(i).getConsumo_modelo() + ";"
+                            + alModelos.get(i).getEmisiones_modelo() + ";"
+                            + alModelos.get(i).getNombre_eficiencia() + ";");
+                }
+                fichero.flush();
+                reiniciarCamposConsultarModelo();
+                JOptionPane.showMessageDialog(null, "Se ha generado el informe con éxito.",
+                        "Informe exportado", JOptionPane.INFORMATION_MESSAGE);
+            } catch (FileNotFoundException ex) {
+                JOptionPane.showMessageDialog(null, "No se ha podido exportar el fichero." + "\nInténtelo de nuevo.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            } finally {
+                if (fichero != null) {
+                    reiniciarCamposConsultarModelo();
+                    fichero.close();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error al cerrar el fichero." + "\nInténtelo de nuevo.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
 
@@ -901,7 +1025,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     jtTablaCrearModelo.setValueAt(nombreEficiencia, i, 4);
                 }
             }
-            cargarMarcasEficienciasNuevoModelo();
+            cargarMarcasEficienciasModelo();
         } catch (SQLException sqlex) {
             JOptionPane.showMessageDialog(
                     null,
@@ -951,7 +1075,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     jtTablaModificarModelo.setValueAt(nombreEficiencia, i, 4);
                 }
             }
-            cargarMarcasEficienciasNuevoModelo();
+            cargarMarcasEficienciasModelo();
         } catch (SQLException sqlex) {
             JOptionPane.showMessageDialog(
                     null,
@@ -994,7 +1118,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     jtTablaEliminarModelo.setValueAt(nombreEficiencia, i, 4);
                 }
             }
-            cargarMarcasEficienciasNuevoModelo();
+            cargarMarcasEficienciasModelo();
         } catch (SQLException sqlex) {
             JOptionPane.showMessageDialog(
                     null,
@@ -1016,14 +1140,15 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      */
     private void reiniciarCamposConsultarModelo() {
         jcbMarcasConsultaModelos.setSelectedIndex(0);
-        jlConsumoConsultaModelos.setText("Consumo máximo: --- L/100km");
         jslSelectorConsumo.setValue(50);
-        jlEmisionesConsultaModelos.setText("Emisiones máximas: --- gCO2/km");
         jslSelectorEmisiones.setValue(50);
+        jlConsumoConsultaModelos.setText("Consumo máximo: --- L/100km");
+        jlEmisionesConsultaModelos.setText("Emisiones máximas: --- gCO2/km");
         jcbEficienciasConsultaModelos.setSelectedIndex(0);
+        jbReiniciarConsulta.setEnabled(false);
         jbExportarModelos.setEnabled(false);
         limpiarTablas();
-        cargarMarcasEficienciasNuevoModelo();
+        cargarMarcasEficienciasModelo();
     }
 
     @SuppressWarnings("unchecked")
@@ -1119,13 +1244,13 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         jlEmisionesConsultaModelos = new javax.swing.JLabel();
         jslSelectorEmisiones = new javax.swing.JSlider();
         jbConsultarModelos = new javax.swing.JButton();
+        jbReiniciarConsulta = new javax.swing.JButton();
         jspTablaConsultaModelos = new javax.swing.JScrollPane();
         jtTablaConsultaModelos = new javax.swing.JTable();
         jbExportarModelos = new javax.swing.JButton();
         jmbBarraMenu = new javax.swing.JMenuBar();
         jmModulos = new javax.swing.JMenu();
         jmiConectar = new javax.swing.JMenuItem();
-        jmInfo = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -1720,6 +1845,14 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
             }
         });
 
+        jbReiniciarConsulta.setText("Reiniciar consulta");
+        jbReiniciarConsulta.setEnabled(false);
+        jbReiniciarConsulta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbReiniciarConsultaActionPerformed(evt);
+            }
+        });
+
         jtTablaConsultaModelos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {},
@@ -1735,6 +1868,11 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jbExportarModelos.setText("Exportar informe");
         jbExportarModelos.setEnabled(false);
+        jbExportarModelos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbExportarModelosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jpConsultarModeloLayout = new javax.swing.GroupLayout(jpConsultarModelo);
         jpConsultarModelo.setLayout(jpConsultarModeloLayout);
@@ -1766,7 +1904,10 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jbExportarModelos, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jbConsultarModelos, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpConsultarModeloLayout.createSequentialGroup()
+                                .addComponent(jbConsultarModelos)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jbReiniciarConsulta)))))
                 .addContainerGap())
         );
         jpConsultarModeloLayout.setVerticalGroup(
@@ -1793,7 +1934,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                     .addComponent(jslSelectorEmisiones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbEficienciasConsultaModelos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jbConsultarModelos)
+                .addGroup(jpConsultarModeloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jbConsultarModelos)
+                    .addComponent(jbReiniciarConsulta))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jspTablaConsultaModelos, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1828,9 +1971,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jmbBarraMenu.add(jmModulos);
 
-        jmInfo.setText("Info");
-        jmbBarraMenu.add(jmInfo);
-
         setJMenuBar(jmbBarraMenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1856,20 +1996,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     }//GEN-LAST:event_jbCrearMarcaActionPerformed
 
     private void jcbMarcasModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jcbMarcasModificarActionPerformed
-//        String marcaSeleccionada = (String) jcbMarcasModificar.getSelectedItem();
-//        if (marcaSeleccionada.compareToIgnoreCase("Seleccione una marca...") == 0) {
-//            jtfNuevoNombreModificar.setEnabled(false);
-//            jtfNuevoNombreModificar.setText("");
-//            jbModificarMarca.setEnabled(false);
-//            JOptionPane.showMessageDialog(
-//                    null,
-//                    "Seleccione una marca válida en el selector desplegable.",
-//                    "Información",
-//                    JOptionPane.INFORMATION_MESSAGE);
-//        } else {
-//            jtfNuevoNombreModificar.setEnabled(true);
-//            jbModificarMarca.setEnabled(true);
-//        }
+
     }//GEN-LAST:event_jcbMarcasModificarActionPerformed
 
     private void jbModificarMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbModificarMarcaActionPerformed
@@ -1905,8 +2032,16 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     }//GEN-LAST:event_jbConsultarModelosActionPerformed
 
     private void jtfNombreNuevoModeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfNombreNuevoModeloActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jtfNombreNuevoModeloActionPerformed
+
+    private void jbExportarModelosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExportarModelosActionPerformed
+        exportarResultadosConsulta();
+    }//GEN-LAST:event_jbExportarModelosActionPerformed
+
+    private void jbReiniciarConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbReiniciarConsultaActionPerformed
+        reiniciarCamposConsultarModelo();
+    }//GEN-LAST:event_jbReiniciarConsultaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1922,16 +2057,24 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFGestorVehiculos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFGestorVehiculos.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JFGestorVehiculos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFGestorVehiculos.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JFGestorVehiculos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFGestorVehiculos.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JFGestorVehiculos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JFGestorVehiculos.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -1952,6 +2095,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private javax.swing.JButton jbExportarModelos;
     private javax.swing.JButton jbModificarMarca;
     private javax.swing.JButton jbModificarModelo;
+    private javax.swing.JButton jbReiniciarConsulta;
     private javax.swing.JComboBox<String> jcbEficienciaNuevoModelo;
     private javax.swing.JComboBox<String> jcbEficienciasConsultaModelos;
     private javax.swing.JComboBox<String> jcbMarcaNuevoModelo;
@@ -1991,7 +2135,6 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
     private javax.swing.JLabel jlUnidadesConsumoNuevoModelo;
     private javax.swing.JLabel jlUnidadesEmisionesModificarModelo;
     private javax.swing.JLabel jlUnidadesEmisionesNuevoModelo;
-    private javax.swing.JMenu jmInfo;
     private javax.swing.JMenu jmModulos;
     private javax.swing.JMenuBar jmbBarraMenu;
     private javax.swing.JMenuItem jmiConectar;

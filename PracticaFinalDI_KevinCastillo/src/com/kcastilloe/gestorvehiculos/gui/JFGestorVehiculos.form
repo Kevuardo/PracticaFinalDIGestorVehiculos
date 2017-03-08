@@ -19,11 +19,6 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="jmInfo">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Info"/>
-          </Properties>
-        </Menu>
       </SubComponents>
     </Menu>
   </NonVisualComponents>
@@ -1079,7 +1074,11 @@
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="jbExportarModelos" alignment="1" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jbConsultarModelos" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="jbConsultarModelos" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="jbReiniciarConsulta" min="-2" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
                                   </Group>
                               </Group>
@@ -1115,7 +1114,10 @@
                                   <Component id="jcbEficienciasConsultaModelos" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="jbConsultarModelos" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jbConsultarModelos" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jbReiniciarConsulta" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jspTablaConsultaModelos" pref="333" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -1199,6 +1201,15 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbConsultarModelosActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JButton" name="jbReiniciarConsulta">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Reiniciar consulta"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbReiniciarConsultaActionPerformed"/>
+                      </Events>
+                    </Component>
                     <Container class="javax.swing.JScrollPane" name="jspTablaConsultaModelos">
                       <AuxValues>
                         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -1226,6 +1237,9 @@
                         <Property name="text" type="java.lang.String" value="Exportar informe"/>
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jbExportarModelosActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
