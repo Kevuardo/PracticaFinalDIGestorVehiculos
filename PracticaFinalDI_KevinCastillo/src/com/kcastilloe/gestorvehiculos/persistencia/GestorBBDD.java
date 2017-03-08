@@ -475,13 +475,13 @@ public class GestorBBDD {
             this.abrirConexion();
         }
         try {
-            /* Selecciona los máximos consumos y emisiones para luego aplicarlos al rango de los JSliders. */
-            sql = "select * from modelos where id_marca = ? and consumo_modelo <= ? and emisiones_modelo <= ? and id_eficiencia <= ? order by id_modelo";
+            sql = "select * from modelos where id_marca = ? and consumo_modelo <= ? "
+                    + "and emisiones_modelo <= ? and id_eficiencia <= ? order by id_modelo";
             ps = conexion.prepareStatement(sql);
             ps.setInt(1, modeloBusqueda.getId_marca());
             ps.setFloat(2, modeloBusqueda.getConsumo_modelo());
             ps.setFloat(3, modeloBusqueda.getEmisiones_modelo());
-            ps.setInt(1, modeloBusqueda.getId_eficiencia());
+            ps.setInt(4, modeloBusqueda.getId_eficiencia());
             rs = ps.executeQuery();
             while (rs.next()) {
                 id_modelo = rs.getInt("id_modelo");
