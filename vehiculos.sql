@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 27-02-2017 a las 01:56:13
+-- Tiempo de generación: 08-03-2017 a las 12:24:35
 -- Versión del servidor: 10.1.13-MariaDB
 -- Versión de PHP: 5.6.21
 
@@ -36,9 +36,9 @@ CREATE TABLE `eficiencias` (
 --
 
 INSERT INTO `eficiencias` (`id_eficiencia`, `nombre_eficiencia`) VALUES
-(1, 'Eficiencia mínima'),
 (2, 'Eficiencia intermedia'),
-(3, 'Eficiencia máxima');
+(3, 'Eficiencia máxima'),
+(1, 'Eficiencia mínima');
 
 -- --------------------------------------------------------
 
@@ -51,18 +51,6 @@ CREATE TABLE `marcas` (
   `nombre_marca` varchar(50) COLLATE utf8mb4_spanish2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
---
--- Volcado de datos para la tabla `marcas`
---
-
-INSERT INTO `marcas` (`id_marca`, `nombre_marca`) VALUES
-(1, 'Renault'),
-(2, 'Peugeot'),
-(3, 'Seat'),
-(4, 'Audi'),
-(5, 'Mazda'),
-(6, 'Bugatti');
-
 -- --------------------------------------------------------
 
 --
@@ -74,19 +62,9 @@ CREATE TABLE `modelos` (
   `nombre_modelo` varchar(50) COLLATE utf8mb4_spanish2_ci NOT NULL,
   `id_marca` int(11) NOT NULL,
   `id_eficiencia` int(11) NOT NULL,
-  `consumo_modelo` int(11) NOT NULL,
-  `emisiones_modelo` int(11) NOT NULL
+  `consumo_modelo` float(5,2) NOT NULL,
+  `emisiones_modelo` float(5,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
-
---
--- Volcado de datos para la tabla `modelos`
---
-
-INSERT INTO `modelos` (`id_modelo`, `nombre_modelo`, `id_marca`, `id_eficiencia`, `consumo_modelo`, `emisiones_modelo`) VALUES
-(1, 'Laguna', 1, 1, 17, 250),
-(2, '206', 2, 2, 15, 120),
-(3, 'Ibiza', 2, 1, 12, 132),
-(5, 'M3', 3, 2, 16, 180);
 
 --
 -- Índices para tablas volcadas
@@ -96,19 +74,22 @@ INSERT INTO `modelos` (`id_modelo`, `nombre_modelo`, `id_marca`, `id_eficiencia`
 -- Indices de la tabla `eficiencias`
 --
 ALTER TABLE `eficiencias`
-  ADD PRIMARY KEY (`id_eficiencia`);
+  ADD PRIMARY KEY (`id_eficiencia`),
+  ADD UNIQUE KEY `nombre_eficiencia` (`nombre_eficiencia`);
 
 --
 -- Indices de la tabla `marcas`
 --
 ALTER TABLE `marcas`
-  ADD PRIMARY KEY (`id_marca`);
+  ADD PRIMARY KEY (`id_marca`),
+  ADD UNIQUE KEY `nombre_marca` (`nombre_marca`);
 
 --
 -- Indices de la tabla `modelos`
 --
 ALTER TABLE `modelos`
   ADD PRIMARY KEY (`id_modelo`),
+  ADD UNIQUE KEY `nombre_modelo` (`nombre_modelo`),
   ADD KEY `id_marca` (`id_marca`),
   ADD KEY `id_eficiencia` (`id_eficiencia`);
 
@@ -125,7 +106,7 @@ ALTER TABLE `marcas`
 -- AUTO_INCREMENT de la tabla `modelos`
 --
 ALTER TABLE `modelos`
-  MODIFY `id_modelo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_modelo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- Restricciones para tablas volcadas
 --
