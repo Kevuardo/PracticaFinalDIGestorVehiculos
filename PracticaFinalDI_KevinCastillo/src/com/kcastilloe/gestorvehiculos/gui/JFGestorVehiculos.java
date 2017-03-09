@@ -174,6 +174,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método usado para rellenar los JCombobox de la sección Modificar Marcas.
+     */
     private void cargarMarcasModificables() {
         try {
             alMarcas = ges.buscarMarcas();
@@ -294,6 +297,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * Método usado para vaciar la tablas de registros con el fin de actualizarlas. 
+     */
     private void limpiarTablas() {
         /* Se resetean las filas de las tablas: */
         dtmMarcas.setRowCount(0);
@@ -727,6 +733,9 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
      */
     private void consultarModelos() {
         String marcaBusqueda = (String) jcbMarcasConsultaModelos.getSelectedItem();
+        float consumoMaximoSeleccionado = 0f;
+        float emisionesMaximasSeleccionadas = 0f;
+        
         if (marcaBusqueda.compareToIgnoreCase("Seleccione una marca...") == 0) {
             JOptionPane.showMessageDialog(
                     null,
@@ -742,7 +751,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                         "Información",
                         JOptionPane.INFORMATION_MESSAGE);
             } else {
-                float consumoMaximoSeleccionado = jslSelectorConsumo.getValue();
+                consumoMaximoSeleccionado = jslSelectorConsumo.getValue();
                 String eficienciaBusqueda = (String) jcbEficienciasConsultaModelos.getSelectedItem();
                 if (eficienciaBusqueda.compareToIgnoreCase("Seleccione una eficiencia...") == 0) {
                     JOptionPane.showMessageDialog(
@@ -759,8 +768,13 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
                                 "Información",
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        float emisionesMaximasSeleccionadas = jslSelectorEmisiones.getValue();
+                        emisionesMaximasSeleccionadas = jslSelectorEmisiones.getValue();
                         miModelo = new Modelo(idMarca, consumoMaximoSeleccionado, emisionesMaximasSeleccionadas, idEficiencia);
+                        
+                        miModelo.setId_marca(idMarca);
+                        miModelo.setConsumo_modelo(consumoMaximoSeleccionado);
+                        miModelo.setEmisiones_modelo(emisionesMaximasSeleccionadas);
+                        miModelo.setId_eficiencia(idEficiencia);
                         try {
                             alModelos.clear();
                             limpiarTablas();
@@ -1961,7 +1975,7 @@ public class JFGestorVehiculos extends javax.swing.JFrame {
 
         jmModulos.setText("Opciones");
 
-        jmiConectar.setText("Conectar con BD");
+        jmiConectar.setText("Conectar con Base de Datos");
         jmiConectar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jmiConectarActionPerformed(evt);

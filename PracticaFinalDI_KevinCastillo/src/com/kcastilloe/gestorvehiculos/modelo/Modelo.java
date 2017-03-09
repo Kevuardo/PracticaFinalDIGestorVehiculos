@@ -6,31 +6,15 @@ package com.kcastilloe.gestorvehiculos.modelo;
  * @author Kevin Castillo
  */
 public class Modelo {
-
-    public String getNombre_marca() {
-        return nombre_marca;
-    }
-
-    public void setNombre_marca(String nombre_marca) {
-        this.nombre_marca = nombre_marca;
-    }
-
-    public String getNombre_eficiencia() {
-        return nombre_eficiencia;
-    }
-
-    public void setNombre_eficiencia(String nombre_eficiencia) {
-        this.nombre_eficiencia = nombre_eficiencia;
-    }
     
-    private int id_modelo = 0;
-    private String nombre_modelo = null;
-    private int id_marca = 0;
-    private String nombre_marca = null;
-    private int id_eficiencia = 0;
+    private int id_modelo;
+    private String nombre_modelo;
+    private int id_marca;
+    private String nombre_marca;
+    private int id_eficiencia;
     private String nombre_eficiencia = null;
-    private float consumo_modelo = 0f; 
-    private float emisiones_modelo = 0f;
+    private float consumo_modelo; 
+    private float emisiones_modelo;
 
     /**
      * Constructor de Modelo para inserción de datos en BD.
@@ -168,5 +152,21 @@ public class Modelo {
 
     public void setEmisiones_modelo(float emisiones_modelo) {
         this.emisiones_modelo = emisiones_modelo;
+    }
+    
+    public String getNombre_marca() {
+        return nombre_marca;
+    }
+
+    public void setNombre_marca(String nombre_marca) {
+        this.nombre_marca = nombre_marca;
+    }
+
+    public String getNombre_eficiencia() {
+        return nombre_eficiencia;
+    }
+
+    public void setNombre_eficiencia(String nombre_eficiencia) {
+        this.nombre_eficiencia = nombre_eficiencia;
     }
 }

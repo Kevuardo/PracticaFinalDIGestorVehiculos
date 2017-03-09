@@ -462,6 +462,13 @@ public class GestorBBDD {
         return 9;
     }
     
+    /**
+     * Busca modelos específicos en base a los parámetros de filtro seleccionados por el usuario.
+     * @param modeloBusqueda El modelo base de búsqueda, que con los filtros como campos propios.
+     * @return ArrayList de los modelos que están en el umbral de los filtros definidos por el usuario.
+     * @throws SQLException
+     * @throws Exception 
+     */
     public ArrayList buscarModelosEspecificos(Modelo modeloBusqueda) throws SQLException, Exception{
         int id_modelo = 0;
         String nombre_modelo = null;

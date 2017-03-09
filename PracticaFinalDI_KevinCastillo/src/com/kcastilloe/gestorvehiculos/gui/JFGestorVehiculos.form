@@ -11,7 +11,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jmiConectar">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Conectar con BD"/>
+                <Property name="text" type="java.lang.String" value="Conectar con Base de Datos"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jmiConectarActionPerformed"/>
