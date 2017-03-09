@@ -41,9 +41,9 @@ public class GestorBBDD {
     /**
      * Establece la conexión con la BD.
      *
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws Exception
+     * @throws ClassNotFoundException Excepción
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public void abrirConexion() throws ClassNotFoundException, SQLException, Exception {
         try {
@@ -62,8 +62,8 @@ public class GestorBBDD {
      * Método que evalúa si existe la marca seleccionada por el usuario para evitar redundancia de datos.
      * @param marcaConsulta El nombre de la marca de la que se desea saber si existe.
      * @return Booleano para evaluar si existe (true) o no (false).
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public boolean existeMarca(Marca marcaConsulta) throws SQLException, Exception{
         boolean yaExiste = false;
@@ -89,8 +89,8 @@ public class GestorBBDD {
      * Método usado para listar todas las marcas registradas en la BD para volcarlas en la vista.
      * 
      * @return ArrayList con todas las marcas existentes en la BD.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public ArrayList buscarMarcas() throws SQLException, Exception {
         int id_marca;
@@ -121,8 +121,8 @@ public class GestorBBDD {
      * Método usado para devolver el id de la marca correspondiente al nombre de la marca facilitado para eliminar posteriormente por id_marca por ser clave primaria.
      * @param nombreBusqueda El nombre de la marca de la que se desea saber el id.
      * @return El id de la marca correspondiente.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public int buscarMarcaPorNombre(String nombreBusqueda) throws SQLException, Exception{
         int idBusqueda = 0;
@@ -148,8 +148,8 @@ public class GestorBBDD {
      * Método usado para devolver el nombre de la marca correspondiente al id de la marca facilitado.
      * @param idBusqueda El id de la marca de la que se desea sabes su nombre.
      * @return El nombre de la marca correspondiente.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public String buscarMarcaPorId(int idBusqueda) throws SQLException, Exception{
         String nombreBusqueda = null;
@@ -175,8 +175,8 @@ public class GestorBBDD {
      * Método usado para crear un nuevo registro de marca en la BD.
      * 
      * @param nuevaMarca Objeto Marca del que recoger los datos para guardar en BD.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public void crearMarca(Marca nuevaMarca) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
@@ -197,8 +197,8 @@ public class GestorBBDD {
      * Método usado para modificar registros de marca en la BD.
      * 
      * @param marcaModificada Objeto Marca del que recoger los datos para modificar en la BD.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public void modificarMarca(Marca marcaModificada) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
@@ -221,8 +221,8 @@ public class GestorBBDD {
      * Método usado para eliminar un registro de marca a partir de su id, al ser clave primaria.
      * @param id_marca El id de la marca que se desea eliminar.
      * @return Las filas que se han visto afectadas por la operación de borrado.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public int borrarMarca (int id_marca) throws SQLException, Exception {
         int filasAfectadas = 0;
@@ -244,8 +244,8 @@ public class GestorBBDD {
     
     /**
      * Método usado para resetear el autoincremental de id_marca por cuestiones de estética en caso de no haber registros.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public void resetearAutoincrementalMarca() throws SQLException, Exception{
          /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
@@ -267,8 +267,8 @@ public class GestorBBDD {
      * Método que evalúa si existe el modelo seleccionado por el usuario para evitar redundancia de datos.
      * @param modeloConsulta El nombre del modelo del que se desea saber si existe.
      * @return Booleano para evaluar si existe (true) o no (false).
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public boolean existeModelo(Modelo modeloConsulta) throws SQLException, Exception{
         boolean yaExiste = false;
@@ -293,8 +293,8 @@ public class GestorBBDD {
     /**
      * Método usado para listar todos los modelos registrados en la BD para volcarlos en la vista.
      * @return ArrayList con todos los modelos existentes en la BD.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public ArrayList buscarModelos() throws SQLException, Exception {
         int id_modelo = 0;
@@ -334,8 +334,8 @@ public class GestorBBDD {
      * Método usado para devolver el id del modelo correspondiente al nombre del modelo facilitado para eliminar posteriormente por id_modelo por ser clave primaria.
      * @param nombreBusqueda El nombre del modelo de la que se desea saber el id.
      * @return El id del modelo correspondiente.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public int buscarModeloPorNombre(String nombreBusqueda) throws SQLException, Exception{
         int idBusqueda = 0;
@@ -361,8 +361,8 @@ public class GestorBBDD {
      * Método usado para devolver el nombre del modelo correspondiente al id del modelo facilitado.
      * @param idBusqueda El id del modelo de la que se desea sabes su nombre.
      * @return El nombre del modelo correspondiente.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public String buscarModeloPorId(int idBusqueda) throws SQLException, Exception{
         String nombreBusqueda = null;
@@ -388,8 +388,8 @@ public class GestorBBDD {
      * Método usado para crear un nuevo registro de modelo en la BD.
      * 
      * @param nuevoModelo Objeto Modelo del que recoger los datos para guardar en BD.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public void crearModelo(Modelo nuevoModelo) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
@@ -414,8 +414,8 @@ public class GestorBBDD {
      * Método usado para modificar registros de modelo en la BD.
      * 
      * @param modeloModificado Objeto Modelo del que recoger los datos para modificar en la BD.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public void modificarModelo(Modelo modeloModificado) throws SQLException, Exception {
         /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
@@ -441,8 +441,8 @@ public class GestorBBDD {
      * Método usado para eliminar un registro de modelo a partir de su id, al ser clave primaria.
      * @param id_modelo El id del modelo que se desea eliminar.
      * @return Las filas que se han visto afectadas por la operación de borrado.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public int borrarModelo (int id_modelo) throws SQLException, Exception {
         int filasAfectadas = 0;
@@ -466,8 +466,8 @@ public class GestorBBDD {
      * Busca modelos específicos en base a los parámetros de filtro seleccionados por el usuario.
      * @param modeloBusqueda El modelo base de búsqueda, que con los filtros como campos propios.
      * @return ArrayList de los modelos que están en el umbral de los filtros definidos por el usuario.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public ArrayList buscarModelosEspecificos(Modelo modeloBusqueda) throws SQLException, Exception{
         int id_modelo = 0;
@@ -506,8 +506,8 @@ public class GestorBBDD {
     
     /**
      * Método usado para resetear el autoincremental de id_modelo por cuestiones de estética en caso de no haber registros.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public void resetearAutoincrementalModelo() throws SQLException, Exception{
          /* Para cerciorarse de que no se ha cerrado la conexión antes de hacer la consulta. */
@@ -554,8 +554,8 @@ public class GestorBBDD {
      * Método usado para recuperar el nombre de una eficiencia según su id.
      * @param idBusqueda El id de la eficiencia de la que se desea conocer el nombre.
      * @return El nombre de la eficiencia correspondiente.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public String buscarEficienciasPorId(int idBusqueda) throws SQLException, Exception{
         String nombreBusqueda = null;
@@ -581,8 +581,8 @@ public class GestorBBDD {
      * Método usado para recuperar el id de una eficiencia según su nombre.
      * @param nombreBusqueda El nombre de la eficiencia de la que se desea conocer el id.
      * @return El id de la eficiencia correspondiente.
-     * @throws SQLException
-     * @throws Exception 
+     * @throws SQLException Excepción
+     * @throws Exception Excepción
      */
     public int buscarEficienciasPorNombre(String nombreBusqueda) throws SQLException, Exception{
         int idBusqueda = 0;

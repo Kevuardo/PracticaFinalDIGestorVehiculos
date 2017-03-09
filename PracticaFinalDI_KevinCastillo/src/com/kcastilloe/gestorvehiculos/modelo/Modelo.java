@@ -19,7 +19,7 @@ public class Modelo {
     /**
      * Constructor de Modelo para inserción de datos en BD.
      * 
-     * @param nombreModelo El nombre del modelo.
+     * @param nombre_modelo El nombre del modelo.
      * @param id_marca El id de la marca a la que pertenece el modelo.
      * @param id_eficiencia El id de la eficiencia que le corresponde al modelo.
      * @param consumo_modelo El consumo del modelo, expresado en litros/100km.
@@ -37,7 +37,7 @@ public class Modelo {
      * Constructor de Modelo para recogida de datos en BD.
      * 
      * @param id_modelo El id característico del modelo (clave primaria).
-     * @param nombreModelo El nombre del modelo.
+     * @param nombre_modelo El nombre del modelo.
      * @param id_marca El id de la marca a la que pertenece el modelo.
      * @param id_eficiencia El id de la eficiencia que le corresponde al modelo.
      * @param consumo_modelo El consumo del modelo, expresado en litros/100km.
@@ -77,8 +77,8 @@ public class Modelo {
      * según sus parámetros.
      * 
      * @param id_marca El id de la marca del modelo a consultar.
-     * @param consumo_modelo El consumo máximo del modelo a consultar.
-     * @param emisiones_modelo Las emisiones máximas del modelo a consultar.
+     * @param consumo_maximo_modelo El consumo máximo del modelo a consultar.
+     * @param emisiones_maximas_modelo Las emisiones máximas del modelo a consultar.
      * @param id_eficiencia El id de la eficiencia del modelo a consultar.
      */
     public Modelo(int id_marca, float consumo_maximo_modelo, float emisiones_maximas_modelo, int id_eficiencia) {
